@@ -7,7 +7,7 @@ import options from './config/defaultOptions';
 import rootRouter from './routes';
 import { config } from 'dotenv';
 import { credentialMiddleware } from './middleware/credentialMiddleware';
-import { pool } from './models/Connection';
+import { pool } from './Connection';
 
 // load .env file
 config();

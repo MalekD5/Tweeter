@@ -1,4 +1,4 @@
-import { pool } from './Connection';
+import { pool } from '../Connection';
 import { RowDataPacket } from 'mysql2';
 
 interface ResponseUser extends RowDataPacket {
