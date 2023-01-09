@@ -70,7 +70,7 @@ export async function findByRefreshToken(
 export async function checkDuplicate(
   email: string,
   username: string
-): Promise<User | undefined> {
+): Promise<{ email: string; username: string } | undefined> {
   const [users] = await pool
     .promise()
     .execute<ResponseUser[]>(
@@ -80,9 +80,7 @@ export async function checkDuplicate(
 
   const [user] = users;
   if (user) {
-    {
-      user.username, user.email;
-    }
+    return { email: user.email, username: user.username };
   }
   return undefined;
 }
