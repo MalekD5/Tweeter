@@ -7,7 +7,7 @@ import options from './config/defaultOptions';
 import rootRouter from './routes';
 import { config } from 'dotenv';
 import { credentialMiddleware } from './middleware/credentialMiddleware';
-import { pool } from './Connection';
+import { connect } from './Connection';
 
 // load .env file
 config();
@@ -28,11 +28,6 @@ const PORT: number = process.env.PORT || 5000;
 
 export const ENV = process.env.NODE_ENV || 'development';
 
-pool
-  .promise()
-  .query(
-    'CREATE TABLE IF NOT EXISTS authentication(username VARCHAR(25) NOT NULL, email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, refreshToken VARCHAR(255), PRIMARY KEY(email), UNIQUE (username));'
-  )
-  .then(() => {
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  });
+connect().then(() => {
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+});
