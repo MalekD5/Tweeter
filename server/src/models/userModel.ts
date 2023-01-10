@@ -2,6 +2,7 @@ import { pool, authTable } from '../Connection';
 import { RowDataPacket } from 'mysql2';
 
 interface ResponseUser extends RowDataPacket {
+  id: number;
   username: string;
   email: string;
   password: string;
@@ -9,17 +10,20 @@ interface ResponseUser extends RowDataPacket {
 }
 
 class User {
+  id: number;
   username: string;
   email: string;
   password: string;
   refreshToken: string;
 
   constructor(
+    id: number,
     email: string,
     username: string,
     password: string,
     refreshToken: string
   ) {
+    this.id = id;
     this.email = email;
     this.username = username;
     this.password = password;
@@ -47,7 +51,13 @@ export async function findByEmail(email: string): Promise<User | undefined> {
 
   const [user] = users;
 
-  return new User(user.email, user.username, user.password, user.refreshToken);
+  return new User(
+    user.id,
+    user.email,
+    user.username,
+    user.password,
+    user.refreshToken
+  );
 }
 
 export async function findByRefreshToken(
@@ -64,7 +74,13 @@ export async function findByRefreshToken(
 
   const [user] = users;
 
-  return new User(user.email, user.username, user.password, user.refreshToken);
+  return new User(
+    user.id,
+    user.email,
+    user.username,
+    user.password,
+    user.refreshToken
+  );
 }
 
 export async function checkDuplicate(
