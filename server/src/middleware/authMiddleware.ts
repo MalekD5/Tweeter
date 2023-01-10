@@ -15,8 +15,8 @@ export const authMiddleware = (
     process.env.ACCESS_TOKEN_SECRET,
     (err: any, decoded: any) => {
       if (err) return res.sendStatus(403); // invalid token
-      req.username = decoded.username;
-      req.userid = decoded.userid;
+      req.locals.username = decoded.username;
+      req.locals.userid = decoded.userid;
       next();
     }
   );
