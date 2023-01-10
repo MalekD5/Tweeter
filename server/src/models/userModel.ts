@@ -1,4 +1,4 @@
-import { pool } from '../Connection';
+import { pool, authTable } from '../Connection';
 import { RowDataPacket } from 'mysql2';
 
 interface ResponseUser extends RowDataPacket {
@@ -29,7 +29,7 @@ class User {
   async save() {
     await pool
       .promise()
-      .execute('UPDATE authentication SET refreshToken=? WHERE email=?', [
+      .execute(`UPDATE ${authTable} SET refreshToken=? WHERE email=?`, [
         this.refreshToken,
         this.email
       ]);
@@ -39,7 +39,7 @@ class User {
 export async function findByEmail(email: string): Promise<User | undefined> {
   const [users] = await pool
     .promise()
-    .execute<ResponseUser[]>('SELECT * FROM authentication WHERE email=?', [
+    .execute<ResponseUser[]>(`SELECT * FROM ${authTable} WHERE email=?`, [
       email
     ]);
 
@@ -56,7 +56,7 @@ export async function findByRefreshToken(
   const [users] = await pool
     .promise()
     .execute<ResponseUser[]>(
-      'SELECT * FROM authentication WHERE refreshToken=?',
+      `SELECT * FROM ${authTable} WHERE refreshToken=?`,
       [refreshToken]
     );
 
@@ -74,7 +74,7 @@ export async function checkDuplicate(
   const [users] = await pool
     .promise()
     .execute<ResponseUser[]>(
-      'SELECT email,username FROM authentication WHERE email=? OR username=?',
+      `SELECT email,username FROM ${authTable} WHERE email=? OR username=?`,
       [email, username]
     );
 
@@ -93,7 +93,7 @@ export async function create(
   await pool
     .promise()
     .execute(
-      'INSERT INTO authentication(username, email, password) VALUES(?,?,?)',
+      `INSERT INTO ${authTable}(username, email, password) VALUES(?,?,?)`,
       [username, email, password]
     );
 }
