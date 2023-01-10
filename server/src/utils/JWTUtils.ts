@@ -7,7 +7,7 @@ const ACCESS_TOKEN_EXIPRY = '30s';
 
 export const createAccessToken = (user: User): string => {
   return jwt.sign(
-    { username: user.username },
+    { userid: user.id, username: user.username },
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: ACCESS_TOKEN_EXIPRY }
   );
