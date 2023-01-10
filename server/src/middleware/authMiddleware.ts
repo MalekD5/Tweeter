@@ -16,6 +16,7 @@ export const authMiddleware = (
     (err: any, decoded: any) => {
       if (err) return res.sendStatus(403); // invalid token
       req.username = decoded.username;
+      req.userid = decoded.userid;
       next();
     }
   );
