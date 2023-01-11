@@ -8,7 +8,7 @@ import { setToken } from '@/redux/features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
 
 import validator from 'validator';
-import style from '@/styles/login.module.css';
+import style from '@/styles/form.module.css';
 
 const loginSchema = z.object({
   email: z.string().refine(validator.isEmail),
@@ -69,6 +69,7 @@ function Login() {
           clearable
           underlined
           size='xl'
+          type='email'
           placeholder='email@email.com'
           {...register('email')}
           aria-label='email'
