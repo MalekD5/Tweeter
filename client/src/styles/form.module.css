@@ -4,13 +4,9 @@
   justify-content: center;
   align-items: center;
   flex: 1 0 auto;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .container > * {
-  width: 100%;
-}
-
-.fixed_size {
   width: 100%;
 }
