@@ -1,5 +1,5 @@
 import { Text, Loading, Card } from '@nextui-org/react';
-import { useGetTopPostsQuery } from 'redux/posts/postsSlice';
+import { useGetTopPostsQuery } from '@/redux/features/posts/postsSlice';
 import { parseISO, formatDistanceToNow } from 'date-fns';
 
 function Home() {
