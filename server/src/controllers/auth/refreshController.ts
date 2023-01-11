@@ -15,7 +15,7 @@ export const refreshController = async (req: Request, res: Response) => {
     (err: any, decoded: any) => {
       if (err || user?.username != decoded.username) return res.sendStatus(403);
       const accessToken = createAccessToken(user);
-      res.status(200).json({ accessToken });
+      res.status(200).json({ token: accessToken });
     }
   );
 };
