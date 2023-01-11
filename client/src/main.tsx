@@ -4,7 +4,8 @@ import App from './App';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { NextUIProvider, createTheme } from '@nextui-org/react';
 import { Provider } from 'react-redux';
-import { store } from './redux/Store';
+import { store } from 'redux/Store';
+import './main.css';
 
 const theme = createTheme({
   type: 'dark'
