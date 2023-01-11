@@ -62,25 +62,29 @@ function Login() {
       >
         Login
       </Text>
-      <form className={style.container} onSubmit={submit(handleSubmit)}>
+      <form
+        className={style.container}
+        style={{ gap: '2.5rem' }}
+        onSubmit={submit(handleSubmit)}
+      >
         <Input
-          color='primary'
           label='Email'
           clearable
-          underlined
+          bordered
           size='xl'
           type='email'
+          helperText='Required'
           placeholder='email@email.com'
           {...register('email')}
           aria-label='email'
         />
         <Input.Password
-          color='primary'
           label='Password'
-          underlined
+          bordered
           clearable
           type='password'
           size='xl'
+          helperText='Required'
           placeholder='password'
           {...register('password')}
           aria-label='password'
