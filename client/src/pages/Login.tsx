@@ -73,7 +73,6 @@ function Login() {
           bordered
           size='xl'
           type='email'
-          helperText='Required'
           placeholder='email@email.com'
           {...register('email')}
           aria-label='email'
@@ -84,7 +83,6 @@ function Login() {
           clearable
           type='password'
           size='xl'
-          helperText='Required'
           placeholder='password'
           {...register('password')}
           aria-label='password'
