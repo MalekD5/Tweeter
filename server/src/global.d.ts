@@ -10,6 +10,10 @@ declare global {
       REFRESH_TOKEN_SECRET: string;
       PORT: number;
       NODE_ENV: string;
+      SMPT_HOST: string;
+      SMPT_PORT: number;
+      SMPT_USER: string;
+      SMPT_PASSWORD: string;
     }
   }
 }

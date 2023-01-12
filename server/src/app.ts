@@ -7,11 +7,12 @@ import options from './config/defaultOptions';
 import rootRouter from './routes';
 import { config } from 'dotenv';
 import { credentialMiddleware } from './middleware/credentialMiddleware';
-import { connect } from './Connection';
+import { connect } from './MySQLConnection';
+import './Nodemailer';
 
 // load .env file
 config();
-
+const PORT: number = process.env.PORT || 5000;
 const app = express();
 
 app.use(helmet());
@@ -23,10 +24,6 @@ app.use(credentialMiddleware);
 app.use(cors(options.cors));
 app.use(cookieParser());
 app.use('/api/v1', rootRouter);
-
-const PORT: number = process.env.PORT || 5000;
-
-export const ENV = process.env.NODE_ENV || 'development';
 
 connect().then(() => {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
