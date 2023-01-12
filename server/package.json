@@ -2,11 +2,13 @@
   "name": "tweeter-server",
   "version": "1.0.0",
   "description": "tweeter backend",
-  "main": "index.js",
+  "main": "./dist/app.js",
   "author": "MalekD5",
   "license": "GPLv3",
   "private": true,
   "scripts": {
+    "build": "npx tsc",
+    "start": "node dist/app.js",
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts"
   },
   "dependencies": {
