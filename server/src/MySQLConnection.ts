@@ -45,11 +45,4 @@ async function connect() {
   }
 }
 
-export function rollback(con: mysql.PoolConnection, err: mysql.QueryError) {
-  return con.rollback(() => {
-    con.release();
-    throw err;
-  });
-}
-
 export { pool, authTable, postsTable, verifyTable, connect };
