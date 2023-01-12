@@ -3,13 +3,13 @@ import jwt from 'jsonwebtoken';
 import { User } from '../models/userModel';
 
 const REFRESH_TOKEN_EXPIRY = '1d';
-const ACCESS_TOKEN_EXIPRY = '10m';
+const ACCESS_TOKEN_EXPIRY = '10m';
 
 export const createAccessToken = (user: User): string => {
   return jwt.sign(
     { userid: user.id, username: user.username },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: ACCESS_TOKEN_EXIPRY }
+    { expiresIn: ACCESS_TOKEN_EXPIRY }
   );
 };
 
