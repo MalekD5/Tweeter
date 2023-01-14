@@ -8,7 +8,7 @@ import rootRouter from './routes';
 import { config } from 'dotenv';
 import { credentialMiddleware } from './middleware/credentialMiddleware';
 import { connect } from './MySQLConnection';
-import './Nodemailer';
+import './mailer';
 
 // load .env file
 config();
@@ -16,7 +16,7 @@ const PORT: number = process.env.PORT || 5000;
 const app = express();
 
 app.use(helmet());
-const LIMIT = '15mb';
+const LIMIT = '1mb';
 
 app.use(bodyParser.json({ limit: LIMIT }));
 app.use(bodyParser.urlencoded({ limit: LIMIT, extended: true }));
@@ -28,3 +28,4 @@ app.use('/api/v1', rootRouter);
 connect().then(() => {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
+
