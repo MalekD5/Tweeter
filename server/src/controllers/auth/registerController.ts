@@ -1,6 +1,8 @@
-import { Request, Response } from 'express';
-import { checkDuplicate, create } from '../../models/userModel';
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
+import type { Request, Response } from 'express';
+import { checkDuplicate, create } from '@/models/userModel';
+import { createVerifyCode } from '@/models/verifyModel';
 
 export const registerController = async (req: Request, res: Response) => {
   const { email, password, username } = req.body;
@@ -17,9 +19,14 @@ export const registerController = async (req: Request, res: Response) => {
 
   try {
     const encrypted_password = await bcrypt.hash(password, 10);
-    await create(username, email, encrypted_password);
+    const id = await create(username, email, encrypted_password);
 
-    return res.status(201).json({ message: 'Created' });
+    res.status(201).json({ message: 'Created' });
+    await createVerifyCode(
+      id,
+      email,
+      crypto.randomUUID().replace(/-/g, '').substring(0, 12)
+    );
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: (err as Error).message });
