@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { createTokens, jwtCookieOptions } from '../../utils/JWTUtils';
-import { findByEmail } from '../../models/userModel';
+import { findByEmail } from '@/models/userModel';
 import bcrypt from 'bcrypt';
 
 export const loginController = async (req: Request, res: Response) => {
