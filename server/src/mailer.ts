@@ -1,10 +1,9 @@
-import nodemailer from 'nodemailer';
 import { config } from 'dotenv';
+import nodemailer from 'nodemailer';
 
 config();
 
 export const initialize = () => {
-  console.log('init once');
   const transport = nodemailer.createTransport({
     host: process.env.SMPT_HOST,
     port: process.env.SMPT_PORT,
