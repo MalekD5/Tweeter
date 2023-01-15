@@ -1,13 +1,13 @@
 import { CookieOptions } from 'express';
 import jwt from 'jsonwebtoken';
-import { User } from '../models/userModel';
+import { User } from '@/models/userModel';
 
 const REFRESH_TOKEN_EXPIRY = '1d';
 const ACCESS_TOKEN_EXPIRY = '10m';
 
 export const createAccessToken = (user: User): string => {
   return jwt.sign(
-    { userid: user.id, username: user.username },
+    { userid: user.id, username: user.username, verified: user.verified },
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: ACCESS_TOKEN_EXPIRY }
   );
@@ -15,7 +15,7 @@ export const createAccessToken = (user: User): string => {
 
 export const createRefreshToken = (user: User): string => {
   return jwt.sign(
-    { username: user.username },
+    { userId: user.id },
     process.env.REFRESH_TOKEN_SECRET,
     { expiresIn: REFRESH_TOKEN_EXPIRY }
   );
