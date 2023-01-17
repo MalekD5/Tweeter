@@ -15,8 +15,15 @@ export const postApi = createApi({
   endpoints: (builder) => ({
     getTopPosts: builder.query({
       query: () => '/'
+    }),
+    createPost: builder.mutation({
+      query: ({ postText }) => ({
+        url: '/',
+        method: 'POST',
+        body: { text: postText }
+      })
     })
   })
 });
 
-export const { useGetTopPostsQuery } = postApi;
+export const { useGetTopPostsQuery, useCreatePostMutation } = postApi;
