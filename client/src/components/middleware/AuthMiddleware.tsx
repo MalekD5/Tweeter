@@ -2,9 +2,8 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { usePersist } from 'hooks/usePersistHook';
 import { Loading } from '@nextui-org/react';
-import {AuthMiddleware} from "@/components/index";
 
-function PersistLoginMiddleware() {
+function AuthMiddleware() {
   const [state, setState] = useState('initial');
   const checkPersist = usePersist();
 
@@ -26,8 +25,8 @@ function PersistLoginMiddleware() {
     case 'allow':
       return <Outlet />;
     default:
-      return <Navigate to='/login' replace />;
+      return <Navigate to='/' replace />;
   }
 }
 
-export default PersistLoginMiddleware;
+export default AuthMiddleware;
