@@ -14,8 +14,11 @@ export function usePersist() {
 
     try {
       const { token } = await refreshRequest(null).unwrap();
-      dispatch(setToken({ token }));
-      return true;
+      if (token) {
+        dispatch(setToken({ token }));
+        return true;
+      }
+      return false;
     } catch (err: any) {
       console.log(err);
       return false;
