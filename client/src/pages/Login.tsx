@@ -5,7 +5,7 @@ import {
   Button,
   Input,
   Checkbox,
-  Spacer
+  Spacer, Modal
 } from '@nextui-org/react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -30,6 +30,7 @@ function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error, setError] = useState('');
+  const [visible, setVisible] = useState(false);
 
   const {
     register,
@@ -61,6 +62,10 @@ function Login() {
     }
   };
 
+  const closeHandler = () => {
+    setVisible(false);
+  }
+
   return (
     <Container
         display='flex'
@@ -70,48 +75,63 @@ function Login() {
         css={{gap: '1rem'}}
     >
       <Spacer y={1}/>
+      <Button onPress={() => setVisible(true)}>Login</Button>
+      <Modal closeButton open={visible} onClose={closeHandler}>
+        <Modal.Header>
+          <Text h1>
+            Login
+          </Text>
+        </Modal.Header>
+        <Modal.Body>
+          <form className={style.container}>
+            <Alert error={error}/>
+            <Input
+                label='Email'
+                clearable
+                bordered
+                size='lg'
+                type='email'
+                placeholder='email@email.com'
+                {...register('email')}
+                aria-label='email'
+            />
+            <Input.Password
+                label='Password'
+                bordered
+                clearable
+                type='password'
+                size='lg'
+                placeholder='password'
+                {...register('password')}
+                aria-label='password'
+                css={{m: '0'}}
+            />
 
-      <form className={style.container} onSubmit={submit(handleSubmit)}>
-        <Alert error={error}/>
-
-        <Text h1 css={{textAlign: 'center'}}>
-          Login
-        </Text>
-        <Input
-            label='Email'
-            clearable
-            bordered
-            size='xl'
-            type='email'
-            placeholder='email@email.com'
-            {...register('email')}
-            aria-label='email'
-        />
-        <Input.Password
-            label='Password'
-            bordered
-            clearable
-            type='password'
-            size='xl'
-            placeholder='password'
-            {...register('password')}
-            aria-label='password'
-            css={{m: '0'}}
-        />
-
-        <Controller
-            render={({field}) => (
-                <Checkbox {...field} color='gradient'>
-                  Remember this device
-                </Checkbox>
-            )}
-            control={control}
-            name='persist'
-            defaultValue={false}
-        />
-
-        <Button type='submit'>Login</Button>
-      </form>
+            <Controller
+                render={({field}) => (
+                    <Checkbox size='sm' {...field} color='gradient'>
+                      Remember this device
+                    </Checkbox>
+                )}
+                control={control}
+                name='persist'
+                defaultValue={false}
+            />
+          </form>
+        </Modal.Body>
+        <Modal.Footer>
+          <div style={{
+            display: 'flex',
+            margin: '0 auto',
+            gap: '1rem'
+          }}>
+            <Button size="lg" auto flat color="error" onPress={closeHandler}>
+              Close
+            </Button>
+            <Button size="lg" auto flat color="success" type='submit' onClick={submit(handleSubmit)}>Login</Button>
+          </div>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 }
