@@ -2,6 +2,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { usePersist } from 'hooks/usePersistHook';
 import { Loading } from '@nextui-org/react';
+import {AuthMiddleware} from "@/components/index";
 
 function PersistLoginMiddleware() {
   const [state, setState] = useState('initial');
