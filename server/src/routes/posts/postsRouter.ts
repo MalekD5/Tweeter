@@ -1,8 +1,8 @@
 import express from 'express';
 import { body } from 'express-validator';
 import { validationMiddleware } from '../../middleware/validationMiddleware';
-import { createPostController } from '../../controllers/post/createPostController';
-import { latestPostsController } from '../../controllers/post/latestPostController';
+import { createPostController } from '../../controllers/tweet/createTweet.controller';
+import { latestPostsController } from '../../controllers/tweet/latestTweets.controller';
 
 const router = express.Router();
 

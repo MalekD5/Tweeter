@@ -1,5 +1,5 @@
 import express from 'express';
-import { logoutController } from '../../controllers/auth/logoutController';
+import { logoutController } from '../../controllers/auth/logout.controller';
 import { cookie } from 'express-validator';
 import { validationMiddleware } from '../../middleware/validationMiddleware';
 

@@ -4,7 +4,7 @@ import { config } from 'dotenv';
 config();
 
 const authTable = 'auth',
-  postsTable = 'posts',
+  tweetsTable = 'tweets',
   verifyTable = 'verify';
 
 const pool = mysql.createPool({
@@ -26,8 +26,8 @@ const AUTH_TABLE_QUERY = `
 const VERIFY_TABLE_QUERY = `CREATE TABLE IF NOT EXISTS ${verifyTable} 
       (user_id INT NOT NULL, verifyCode VARCHAR(12) NOT NULL, PRIMARY KEY (user_id), FOREIGN KEY (user_id) REFERENCES ${authTable}(id), UNIQUE(verifyCode))`;
 
-const POST_TABLE_QUERY = `
-      CREATE TABLE IF NOT EXISTS ${postsTable} 
+const TWEET_TABLE_QUERY = `
+      CREATE TABLE IF NOT EXISTS ${tweetsTable} 
       (postid VARCHAR(36) NOT NULL, postedBy INT NOT NULL, postText VARCHAR(280) NOT NULL, 
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY(postid), FOREIGN KEY (postedBy) REFERENCES ${authTable}(id));
       `;
@@ -37,7 +37,7 @@ async function connect() {
   try {
     await connection.execute(AUTH_TABLE_QUERY);
     await connection.execute(VERIFY_TABLE_QUERY);
-    await connection.execute(POST_TABLE_QUERY);
+    await connection.execute(TWEET_TABLE_QUERY);
   } catch (err: any) {
     console.error(err);
   } finally {
@@ -45,4 +45,4 @@ async function connect() {
   }
 }
 
-export { pool, authTable, postsTable, verifyTable, connect };
+export { pool, authTable, tweetsTable, verifyTable, connect };

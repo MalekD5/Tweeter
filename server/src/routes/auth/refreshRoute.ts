@@ -1,5 +1,5 @@
 import express from 'express';
-import { refreshController } from '../../controllers/auth/refreshController';
+import { refreshController } from '../../controllers/auth/refresh.controller';
 import { cookie } from 'express-validator';
 import { validationMiddleware } from '../../middleware/validationMiddleware';
 
