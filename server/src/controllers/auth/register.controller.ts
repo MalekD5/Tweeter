@@ -4,7 +4,7 @@ import type { Request, Response } from 'express';
 import { checkDuplicate, create } from '@/models/userModel';
 import { createVerifyCode } from '@/models/verifyModel';
 
-export const registerController = async (req: Request, res: Response) => {
+export default async function registerController(req: Request, res: Response) {
   const { email, password, username } = req.body;
 
   const dupe = await checkDuplicate(email, username);
@@ -31,4 +31,4 @@ export const registerController = async (req: Request, res: Response) => {
     console.log(err);
     res.status(500).json({ message: (err as Error).message });
   }
-};
+}

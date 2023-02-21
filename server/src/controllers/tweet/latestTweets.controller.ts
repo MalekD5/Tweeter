@@ -2,7 +2,10 @@ import { Request, Response } from 'express';
 import type { Tweet } from '../../models/tweetModel';
 import { retrieveTopTweets } from '../../models/tweetModel';
 
-export async function latestPostsController(req: Request, res: Response) {
+export default async function latestPostsController(
+  req: Request,
+  res: Response
+) {
   try {
     const tweet: Tweet[] = await retrieveTopTweets();
     res.status(200).json({ tweet });

@@ -4,9 +4,9 @@ import {
   loginRoute,
   logoutRoute,
   refreshRoute,
-  verifyRouter
+  verifyRoute
 } from './auth';
-import postRouter from './posts/postsRouter';
+import postRouter from './tweets/tweets.route';
 import { authMiddleware } from '@/middleware/authMiddleware';
 const router = express.Router();
 
@@ -15,10 +15,10 @@ router.use('/', registerRoute);
 router.use('/', loginRoute);
 router.use('/', refreshRoute);
 router.use('/', logoutRoute);
-router.use('/', verifyRouter);
+router.use('/', verifyRoute);
 
 // routes added after this middleware requires authentication (access token)
 router.use(authMiddleware);
-router.use('/post', postRouter);
+router.use('/tweet', postRouter);
 
 export default router;

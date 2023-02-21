@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { jwtClearCookieOptions } from '../../utils/JWTUtils';
-import { findByRefreshToken } from '../../models/userModel';
+import { jwtClearCookieOptions } from '@/utils/JWTUtils';
+import { findByRefreshToken } from '@/models/userModel';
 
-export const logoutController = async (req: Request, res: Response) => {
+export default async function logoutController(req: Request, res: Response) {
   const refreshToken = req.cookies.jwt;
 
   const user = await findByRefreshToken(refreshToken);
@@ -19,4 +19,4 @@ export const logoutController = async (req: Request, res: Response) => {
   res.clearCookie('jwt', jwtClearCookieOptions);
   console.log(`${user.username} logged out`);
   return res.sendStatus(204);
-};
+}

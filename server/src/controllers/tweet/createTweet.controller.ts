@@ -1,7 +1,10 @@
 import { Request, Response } from 'express';
 import { createTweet } from '../../models/tweetModel';
 
-export async function createPostController(req: Request, res: Response) {
+export default async function createPostController(
+  req: Request,
+  res: Response
+) {
   const { text } = req.body;
   const userid = req.locals.userid;
 

@@ -1,9 +1,9 @@
 import type { Request, Response } from 'express';
-import { createTokens, jwtCookieOptions } from '../../utils/JWTUtils';
+import { createTokens, jwtCookieOptions } from '@/utils/JWTUtils';
 import { findByEmail } from '@/models/userModel';
 import bcrypt from 'bcrypt';
 
-export const loginController = async (req: Request, res: Response) => {
+export default async function loginController(req: Request, res: Response) {
   const { email, password } = req.body;
 
   const user = await findByEmail(email);
@@ -22,4 +22,4 @@ export const loginController = async (req: Request, res: Response) => {
     return res.status(200).json({ token: accessToken });
   }
   res.sendStatus(401);
-};
+}

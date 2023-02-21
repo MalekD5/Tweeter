@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { createAccessToken } from '../../utils/JWTUtils';
+import { createAccessToken } from '@/utils/JWTUtils';
 import { findByRefreshToken } from '@/models/userModel';
 import jwt from 'jsonwebtoken';
 
-export const refreshController = async (req: Request, res: Response) => {
+export default async function refreshController(req: Request, res: Response) {
   const refreshToken = req.cookies.jwt;
 
   const user = await findByRefreshToken(refreshToken);
@@ -18,4 +18,4 @@ export const refreshController = async (req: Request, res: Response) => {
       res.status(200).json({ token: accessToken });
     }
   );
-};
+}

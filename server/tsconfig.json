@@ -10,10 +10,7 @@
     "rootDir": "./src",
     "baseUrl": "./src",
     "paths": {
-      "@/controllers/*": ["./controllers/*"],
-      "@/models/*": ["./models/*"],
-      "@/routes/*": ["./routes/*"],
-      "@/middleware/*": ["./middleware/*"]
+      "@/*": ["*"]
     }
   }
 }

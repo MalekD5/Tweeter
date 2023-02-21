@@ -1,8 +1,8 @@
 import express from 'express';
-import { registerController } from '../../controllers/auth/register.controller';
-import { validationMiddleware } from '../../middleware/validationMiddleware';
-import { body } from 'express-validator';
 import { config } from 'dotenv';
+import { body } from 'express-validator';
+import { validationMiddleware } from '@/middleware/validationMiddleware';
+import { registerController } from '@/controllers/auth';
 
 config();
 

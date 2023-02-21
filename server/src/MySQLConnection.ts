@@ -28,8 +28,8 @@ const VERIFY_TABLE_QUERY = `CREATE TABLE IF NOT EXISTS ${verifyTable}
 
 const TWEET_TABLE_QUERY = `
       CREATE TABLE IF NOT EXISTS ${tweetsTable} 
-      (postid VARCHAR(36) NOT NULL, postedBy INT NOT NULL, postText VARCHAR(280) NOT NULL, 
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY(postid), FOREIGN KEY (postedBy) REFERENCES ${authTable}(id));
+      (tweetid VARCHAR(36) NOT NULL, tweetedBy INT NOT NULL, tweetText VARCHAR(280) NOT NULL, 
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY(tweetid), FOREIGN KEY (tweetedBy) REFERENCES ${authTable}(id));
       `;
 
 async function connect() {

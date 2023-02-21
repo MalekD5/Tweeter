@@ -1,7 +1,7 @@
 import express from 'express';
-import { refreshController } from '../../controllers/auth/refresh.controller';
 import { cookie } from 'express-validator';
-import { validationMiddleware } from '../../middleware/validationMiddleware';
+import { validationMiddleware } from '@/middleware/validationMiddleware';
+import { refreshController } from '@/controllers/auth';
 
 const router = express.Router();
 
