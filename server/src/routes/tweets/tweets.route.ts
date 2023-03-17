@@ -11,7 +11,6 @@ const router = express.Router();
 
 const tweetTextValidator = body('text')
   .trim()
-  .escape()
   .isLength({ min: 1, max: 280 })
   .withMessage('text value length must be at least 1 or at most 280');
 
