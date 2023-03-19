@@ -3,22 +3,24 @@ import jwt from 'jsonwebtoken';
 import { User } from '@/models/userModel';
 
 const REFRESH_TOKEN_EXPIRY = '1d';
-const ACCESS_TOKEN_EXPIRY = '10m';
+const ACCESS_TOKEN_EXPIRY = '1h';
 
 export const createAccessToken = (user: User): string => {
   return jwt.sign(
-    { userid: user.id, username: user.username, verified: user.verified },
+    {
+      userid: user.id,
+      username: user.username,
+      pfp: `http://localhost:5000/images/${user.pfp}`
+    },
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: ACCESS_TOKEN_EXPIRY }
   );
 };
 
 export const createRefreshToken = (user: User): string => {
-  return jwt.sign(
-    { userid: user.id },
-    process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: REFRESH_TOKEN_EXPIRY }
-  );
+  return jwt.sign({ userid: user.id }, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: REFRESH_TOKEN_EXPIRY
+  });
 };
 
 export const createTokens = (user: User): string[] => {
