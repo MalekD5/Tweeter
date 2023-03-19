@@ -1,5 +1,7 @@
 import { pool, authTable } from '../MySQLConnection';
-import { RowDataPacket } from 'mysql2';
+import type { RowDataPacket } from 'mysql2';
+import fs from 'fs';
+import path from 'path';
 
 interface ResponseUser extends RowDataPacket, User {}
 
@@ -17,6 +19,7 @@ class User {
   password: string;
   refreshToken: string;
   verified: string;
+  pfp: string;
 
   constructor(
     id: number,
@@ -24,7 +27,8 @@ class User {
     username: string,
     password: string,
     refreshToken: string,
-    verified: string
+    verified: string,
+    pfp: string
   ) {
     this.id = id;
     this.email = email;
@@ -32,6 +36,7 @@ class User {
     this.password = password;
     this.refreshToken = refreshToken;
     this.verified = verified;
+    this.pfp = pfp;
   }
 
   async save() {
@@ -54,7 +59,8 @@ export async function findByEmail(email: string): Promise<User | undefined> {
     user.username,
     user.password,
     user.refreshToken,
-    user.verified
+    user.verified,
+    user.pfp
   );
 }
 
@@ -75,7 +81,8 @@ export async function findByRefreshToken(
     user.username,
     user.password,
     user.refreshToken,
-    user.verified
+    user.verified,
+    user.pfp
   );
 }
 
@@ -103,6 +110,21 @@ export async function create(
     .promise()
     .execute(INSERT_USER, [username, email, password]);
   return data[0].insertId;
+}
+
+export async function modifyUserPfp(id: string, pfp: string) {
+  const [users] = await pool
+    .promise()
+    .execute<ResponseUser[]>(`SELECT pfp FROM ${authTable} WHERE id=?`, [id]);
+
+  if (!users || users.length === 0) return Promise.reject('user not found');
+
+  const [user] = users;
+  fs.unlink(path.resolve(`./images/${user.pfp}`), () => {});
+
+  return await pool
+    .promise()
+    .execute(`UPDATE ${authTable} SET pfp=? WHERE id=?`, [pfp, id]);
 }
 
 export type { User };
