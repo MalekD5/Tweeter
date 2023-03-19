@@ -9,7 +9,7 @@ import { config } from 'dotenv';
 import { credentialMiddleware } from './middleware/credentialMiddleware';
 import { connect } from './MySQLConnection';
 import './mailer';
-import rateLimit from "express-rate-limit";
+import rateLimit from 'express-rate-limit';
 
 // load .env file
 config();
@@ -18,23 +18,22 @@ const limiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   max: 50,
   standardHeaders: true,
-  legacyHeaders: false,
+  legacyHeaders: false
 });
 
 const app = express();
 
 app.use(helmet());
-app.use(limiter)
+app.use(limiter);
 const SIZE_LIMIT_MB = '1mb';
 
 app.use(bodyParser.json({ limit: SIZE_LIMIT_MB }));
-app.use(bodyParser.urlencoded({ limit: SIZE_LIMIT_MB, extended: true }));
 app.use(credentialMiddleware);
 app.use(cors(options.cors));
 app.use(cookieParser());
+app.use('/images', express.static('images'));
 app.use('/api/v1', rootRouter);
 
 connect().then(() => {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
-
