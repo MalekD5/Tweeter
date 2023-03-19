@@ -20,7 +20,7 @@ const pool = mysql.createPool({
 
 const AUTH_TABLE_QUERY = `
       CREATE TABLE IF NOT EXISTS auth
-      (id INT NOT NULL AUTO_INCREMENT, username VARCHAR(25) NOT NULL, email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, refreshToken VARCHAR(255), PRIMARY KEY(id), verified CHAR(1) DEFAULT 0 NOT NULL, UNIQUE (email), UNIQUE (username));
+      (id INT NOT NULL AUTO_INCREMENT, username VARCHAR(25) NOT NULL, email VARCHAR(255) NOT NULL, pfp VARCHAR(100), password VARCHAR(255) NOT NULL, refreshToken VARCHAR(255), PRIMARY KEY(id), verified CHAR(1) DEFAULT 0 NOT NULL, UNIQUE (email), UNIQUE (username));
       `;
 
 const VERIFY_TABLE_QUERY = `CREATE TABLE IF NOT EXISTS ${verifyTable} 
