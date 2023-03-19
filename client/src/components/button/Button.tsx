@@ -1,5 +1,16 @@
-import type { ButtonProps } from '@/components/Components';
 import { determineColor } from '@/utils/ComponentUtils';
+
+export interface ButtonProps
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'className'> {
+  color?:
+    | 'bordered-default'
+    | 'white'
+    | 'danger'
+    | 'success'
+    | 'warning'
+    | 'default';
+  auto?: boolean;
+}
 
 function button(props: ButtonProps) {
   const { color, auto, children, ...rest } = props;
