@@ -5,7 +5,6 @@ import bcrypt from 'bcrypt';
 
 export default async function loginController(req: Request, res: Response) {
   const { email, password } = req.body;
-
   const user = await findByEmail(email);
   if (!user) return res.sendStatus(401);
   if (user.verified !== '1') return res.sendStatus(403);
