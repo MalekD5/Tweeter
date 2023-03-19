@@ -2,11 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./src",
     "paths": {
-      "@/components/*": ["./components/*"],
-      "@/components": ["./components/index"],
-      "@/pages/*": ["./pages/*"],
-      "@/redux/*": ["./redux/*"],
-      "@/styles/*": ["./styles/*"]
+      "@/*": ["*"]
     },
     "target": "ESNext",
     "useDefineForClassFields": true,
