@@ -15,9 +15,7 @@ export const authMiddleware = (
     process.env.ACCESS_TOKEN_SECRET,
     (err: any, decoded: any) => {
       if (err) return res.sendStatus(403); // invalid token
-      const { username, userid, verified } = decoded;
-      if (verified !== '1')
-          return res.status(403).json({ message: "the account is not verified"});
+      const { username, userid } = decoded;
       req.locals = {
         username,
         userid
