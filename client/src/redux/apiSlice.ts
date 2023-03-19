@@ -6,7 +6,7 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: 'http://localhost:5000/api/v1',
     credentials: 'include',
-    prepareHeaders(headers, { getState }) {
+    prepareHeaders(headers, _api) {
       const tokenLocation = localStorage.getItem('persist');
 
       const token =

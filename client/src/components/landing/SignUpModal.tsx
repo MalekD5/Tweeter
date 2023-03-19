@@ -3,7 +3,7 @@ import type { SignProps } from './Landing';
 
 import { Button, FormControl, Label } from '@/components';
 import { useForm } from 'react-hook-form';
-import { useRegisterServiceMutation } from '@/features/auth/authService';
+import { useRegisterServiceMutation } from '@/redux/features/auth/authService';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';

@@ -1,5 +1,5 @@
-import { apiSlice } from '@/app/apiSlice';
-import type { Credentials, RegisterData } from '@/features/auth/Auth';
+import { apiSlice } from '@/redux/apiSlice';
+import type { Credentials, RegisterData } from './Auth';
 
 export const authService = apiSlice.injectEndpoints({
   endpoints: (builder) => ({

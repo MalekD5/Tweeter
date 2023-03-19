@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { authReducer } from '@/features';
+import { authReducer } from './features';
 import { apiSlice } from './apiSlice';
 
 export default configureStore({
@@ -7,6 +7,7 @@ export default configureStore({
     auth: authReducer,
     [apiSlice.reducerPath]: apiSlice.reducer
   },
+  // @ts-ignore
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(apiSlice.middleware)
 });

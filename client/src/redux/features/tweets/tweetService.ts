@@ -1,5 +1,5 @@
-import type { Tweet } from '@/features/tweets/Tweet';
-import { apiSlice } from '@/app/apiSlice';
+import type { Tweet } from './Tweet';
+import { apiSlice } from '@/redux/apiSlice';
 
 export const tweetService = apiSlice.injectEndpoints({
   endpoints: (builder) => ({

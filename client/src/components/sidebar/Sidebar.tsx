@@ -17,7 +17,7 @@ import { useAuth } from '@/hooks/AuthHook';
 import { useUser } from '@/hooks/UserHook';
 import type { User } from '@/hooks/UserHook';
 import { FieldValues, useForm } from 'react-hook-form';
-import { useAddTweetMutation } from '@/features/tweets/tweetService';
+import { useAddTweetMutation } from '@/redux/features/tweets/tweetService';
 import ResizableTextarea from '../form/ResizableTextarea';
 import { Modal, Divider } from 'react-daisyui';
 

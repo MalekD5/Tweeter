@@ -1,5 +1,3 @@
-import { useSelector } from 'react-redux';
-import { selectToken } from '@/features/auth/authSlice';
 import jwtDecode from 'jwt-decode';
 
 export type User = {

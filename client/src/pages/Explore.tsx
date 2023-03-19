@@ -1,9 +1,9 @@
 import { ResizableTextarea, TweetCard } from '@/components';
-import { useGetTweetsQuery } from '@/features/tweets/tweetService';
+import { useGetTweetsQuery } from '@/redux/features/tweets/tweetService';
 import { useAuth } from '@/hooks/AuthHook';
 import { FieldValues, useForm } from 'react-hook-form';
 import { Navigate } from 'react-router-dom';
-import { useAddTweetMutation } from '@/features/tweets/tweetService';
+import { useAddTweetMutation } from '@/redux/features/tweets/tweetService';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { SidebarContext } from '@/context/SidebarContext';
 import { AiOutlineSearch } from 'react-icons/ai';
