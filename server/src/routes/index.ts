@@ -9,7 +9,7 @@ import {
 import postRouter from './tweets/tweets.route';
 import { authMiddleware } from '@/middleware/authMiddleware';
 import uploadRouter from './upload/upload.route';
-
+import bookmarkRoute from './bookmark/bookmark.route';
 const router = express.Router();
 
 // auth routes
@@ -23,5 +23,6 @@ router.use('/', verifyRoute);
 router.use(authMiddleware);
 router.use('/tweet', postRouter);
 router.use(uploadRouter);
+router.use('/bookmarks', bookmarkRoute);
 
 export default router;

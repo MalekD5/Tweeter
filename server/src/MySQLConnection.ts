@@ -3,11 +3,12 @@ import { config } from 'dotenv';
 
 config();
 
-const authTable = 'auth',
+export const authTable = 'auth',
   tweetsTable = 'tweets',
-  verifyTable = 'verify';
+  verifyTable = 'verify',
+  bookmarkTable = 'bookmarks';
 
-const pool = mysql.createPool({
+export const pool = mysql.createPool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   user: process.env.DB_USER,
@@ -32,17 +33,19 @@ const TWEET_TABLE_QUERY = `
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY(tweetid), FOREIGN KEY (tweetedBy) REFERENCES ${authTable}(id));
       `;
 
-async function connect() {
+const BOOKMARKS_TABLE_QUERY = `CREATE TABLE IF NOT EXISTS ${bookmarkTable}
+  (user_id INT NOT NULL, tweet VARCHAR(36) NOT NULL, FOREIGN KEY(user_id) REFERENCES ${authTable}(id), FOREIGN KEY(tweet) REFERENCES ${tweetsTable}(tweetid) ON DELETE CASCADE);`;
+
+export async function connect() {
   const connection = await pool.promise().getConnection();
   try {
     await connection.execute(AUTH_TABLE_QUERY);
     await connection.execute(VERIFY_TABLE_QUERY);
     await connection.execute(TWEET_TABLE_QUERY);
+    await connection.execute(BOOKMARKS_TABLE_QUERY);
   } catch (err: any) {
     console.error(err);
   } finally {
     connection.release();
   }
 }
-
-export { pool, authTable, tweetsTable, verifyTable, connect };
