@@ -7,8 +7,7 @@ import options from './config/defaultOptions';
 import rootRouter from './routes';
 import { config } from 'dotenv';
 import { credentialMiddleware } from './middleware/credentialMiddleware';
-import { connect } from './MySQLConnection';
-import './mailer';
+import { connect } from './mysql';
 import rateLimit from 'express-rate-limit';
 
 // load .env file
