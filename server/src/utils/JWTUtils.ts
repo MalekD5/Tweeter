@@ -1,31 +1,28 @@
 import { CookieOptions } from 'express';
 import jwt from 'jsonwebtoken';
-import { User } from '@/models/userModel';
 
 const REFRESH_TOKEN_EXPIRY = '1d';
 const ACCESS_TOKEN_EXPIRY = '1h';
 
-export const createAccessToken = (user: User): string => {
+export function createAccessToken(id: number) {
   return jwt.sign(
     {
-      userid: user.id,
-      username: user.username,
-      pfp: `http://localhost:5000/images/${user.pfp}`
+      id
     },
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: ACCESS_TOKEN_EXPIRY }
   );
-};
+}
 
-export const createRefreshToken = (user: User): string => {
-  return jwt.sign({ userid: user.id }, process.env.REFRESH_TOKEN_SECRET, {
+export function createRefreshToken(id: number) {
+  return jwt.sign({ id }, process.env.REFRESH_TOKEN_SECRET, {
     expiresIn: REFRESH_TOKEN_EXPIRY
   });
-};
+}
 
-export const createTokens = (user: User): string[] => {
-  return [createAccessToken(user), createRefreshToken(user)];
-};
+export function createTokens(id: number) {
+  return [createAccessToken(id), createRefreshToken(id)];
+}
 
 export const jwtCookieOptions: CookieOptions = {
   httpOnly: true, // prevent browser javascript from accessing the cookie

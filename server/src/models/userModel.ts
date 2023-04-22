@@ -1,130 +1,67 @@
-import { pool, authTable } from '../MySQLConnection';
-import type { RowDataPacket } from 'mysql2';
 import fs from 'fs';
 import path from 'path';
 
-interface ResponseUser extends RowDataPacket, User {}
+import { type RowDataPacket } from 'mysql2';
+import { pool, userTable } from '@/mysql';
+import { exists } from '@/utils/ModelUtils';
 
-const SELECT_USER_BY_EMAIL = `SELECT * FROM ${authTable} WHERE email=?`;
-const SELECT_USER_BY_REFRESH_TK = `SELECT * FROM ${authTable} WHERE refreshToken=?`;
-const SELECT_USERNAME_OR_EMAIL = `SELECT email,username FROM ${authTable} WHERE email=? OR username=?`;
-
-const UPDATE_USER = `UPDATE ${authTable} SET refreshToken=? WHERE email=?`;
-const INSERT_USER = `INSERT INTO ${authTable}(username, email, password) VALUES(?,?,?);`;
-
-class User {
+export type UserData = {
   id: number;
   username: string;
-  email: string;
-  password: string;
-  refreshToken: string;
-  verified: string;
-  pfp: string;
+  displayname: string;
+  created_at: string;
+  pfp?: string;
+  bio?: string;
+};
 
-  constructor(
-    id: number,
-    email: string,
-    username: string,
-    password: string,
-    refreshToken: string,
-    verified: string,
-    pfp: string
-  ) {
-    this.id = id;
-    this.email = email;
-    this.username = username;
-    this.password = password;
-    this.refreshToken = refreshToken;
-    this.verified = verified;
-    this.pfp = pfp;
-  }
+interface UserRowResponse extends RowDataPacket, UserData { }
 
-  async save() {
-    await pool.promise().execute(UPDATE_USER, [this.refreshToken, this.email]);
-  }
-}
-
-export async function findByEmail(email: string): Promise<User | undefined> {
-  const [users] = await pool
-    .promise()
-    .execute<ResponseUser[]>(SELECT_USER_BY_EMAIL, [email]);
-
-  if (!users || users.length === 0) return undefined;
-
-  const [user] = users;
-
-  return new User(
-    user.id,
-    user.email,
-    user.username,
-    user.password,
-    user.refreshToken,
-    user.verified,
-    user.pfp
+export async function find(id: number) {
+  const [response] = await pool.query<UserRowResponse[]>(
+    `SELECT * from ${userTable} WHERE id=?`,
+    [id]
   );
+
+  if (response?.length === 0) return undefined;
+  return response[0] as UserData;
 }
 
-export async function findByRefreshToken(
-  refreshToken: string
-): Promise<User | undefined> {
-  const [users] = await pool
-    .promise()
-    .execute<ResponseUser[]>(SELECT_USER_BY_REFRESH_TK, [refreshToken]);
-
-  if (!users || users.length === 0) return undefined;
-
-  const [user] = users;
-
-  return new User(
-    user.id,
-    user.email,
-    user.username,
-    user.password,
-    user.refreshToken,
-    user.verified,
-    user.pfp
+export async function updateProfilePicture(id: number, pfp_url: string) {
+  const [users] = await pool.execute<UserRowResponse[]>(
+    `SELECT pfp FROM ${userTable} WHERE id=?`,
+    [id]
   );
-}
 
-export async function checkDuplicate(
-  email: string,
-  username: string
-): Promise<{ email: string; username: string } | undefined> {
-  const [users] = await pool
-    .promise()
-    .execute<ResponseUser[]>(SELECT_USERNAME_OR_EMAIL, [email, username]);
+  if (!exists(users)) throw Error('user not found');
 
   const [user] = users;
-  if (user) {
-    return { email: user.email, username: user.username };
-  }
-  return undefined;
+  fs.unlink(path.resolve(`./images/${user.pfp}`), () => { });
+
+  return await pool.execute(`UPDATE ${userTable} SET pfp=? WHERE id=?`, [
+    pfp_url,
+    id
+  ]);
 }
 
-export async function create(
+export async function updateInfo(
+  id: number,
   username: string,
-  email: string,
-  password: string
+  displayname: string,
+  bio: string
 ) {
-  const data: any = await pool
-    .promise()
-    .execute(INSERT_USER, [username, email, password]);
-  return data[0].insertId;
+  let con = null;
+  try {
+    con = await pool.getConnection();
+    await con.beginTransaction();
+    await con.execute(
+      `UPDATE ${userTable} SET username=?, displayname=?, bio=? WHERE id=?`,
+      [username, displayname, bio, id]
+    );
+    await con.commit();
+  } catch (err: any) {
+    con?.rollback();
+    throw err;
+  } finally {
+    con?.release();
+  }
 }
-
-export async function modifyUserPfp(id: string, pfp: string) {
-  const [users] = await pool
-    .promise()
-    .execute<ResponseUser[]>(`SELECT pfp FROM ${authTable} WHERE id=?`, [id]);
-
-  if (!users || users.length === 0) return Promise.reject('user not found');
-
-  const [user] = users;
-  fs.unlink(path.resolve(`./images/${user.pfp}`), () => {});
-
-  return await pool
-    .promise()
-    .execute(`UPDATE ${authTable} SET pfp=? WHERE id=?`, [pfp, id]);
-}
-
-export type { User };
