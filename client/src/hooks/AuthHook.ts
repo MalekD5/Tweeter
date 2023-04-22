@@ -1,4 +1,11 @@
 import { useNavigate } from 'react-router-dom';
+import jwtDecode from 'jwt-decode';
+
+export type User = {
+  username: string;
+  pfp: string;
+  id: string;
+};
 
 export function useAuth() {
   const tokenLocation = localStorage.getItem('persist');
@@ -19,5 +26,13 @@ export function useAuth() {
       ? sessionStorage.getItem('token')
       : localStorage.getItem('token');
 
-  return { token, logout: logoutFunction };
+  const data = (() => {
+    if (!token) {
+      logoutFunction();
+      return;
+    }
+    const decoded = jwtDecode<User>(token);
+    return decoded;
+  })();
+  return { token, logout: logoutFunction, data };
 }
