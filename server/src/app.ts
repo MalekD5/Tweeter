@@ -15,7 +15,7 @@ config();
 const PORT: number = process.env.PORT || 5000;
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000,
-  max: 50,
+  max: 200,
   standardHeaders: true,
   legacyHeaders: false
 });
