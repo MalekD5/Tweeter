@@ -1,8 +1,6 @@
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
-import probe from 'probe-image-size';
-import { Readable } from 'stream';
 
 import UploadController from '@/controllers/upload/upload.controller';
 const router = express.Router();
@@ -29,16 +27,13 @@ const upload = multer({
 
     const mimetype = fileTypes.test(file.mimetype);
     if (mimetype && ext) {
-      const img = await probe(Readable.from(file.buffer));
-      if (img.width === 400 && img.height === 400) {
-        cb(null, true);
-      } else cb(new Error('image dimensions needs to be 400x400'));
+      cb(null, true);
     } else {
       cb(new Error('image needs to be png, jpeg, or jgp'));
     }
   }
 });
 
-router.post('/upload/', upload.single('img'), UploadController);
+router.post('/', upload.single('img'), UploadController);
 
 export default router;

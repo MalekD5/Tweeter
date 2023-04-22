@@ -10,7 +10,10 @@ const router = express.Router();
 router.post(
   '/register',
   [
-    body('username').not().isEmpty().trim().escape(),
+    body(['displayname', 'username'])
+      .trim()
+      .isAlphanumeric()
+      .withMessage('invalid username or displayname'),
     body('email').isEmail(),
     process.env.NODE_ENV === 'development'
       ? body('password')

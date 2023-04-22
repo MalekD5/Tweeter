@@ -5,12 +5,14 @@ export default async function addBookmarkController(
   req: Request,
   res: Response
 ) {
-  const { tweet_id } = req.body();
-  const user_id = req.locals.userid;
+  const { tweet_id } = req.body;
+  const user_id = req.locals.id;
   try {
-    await bookmark(user_id.toString(), tweet_id);
+    await bookmark(user_id, tweet_id);
     res.sendStatus(201);
   } catch (err: any) {
-    res.status(500).json({ message: (err as Error).message });
+    const message = (err as Error).message;
+    if (message.startsWith('Duplicate entry')) res.sendStatus(409);
+    else res.sendStatus(500);
   }
 }

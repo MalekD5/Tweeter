@@ -7,18 +7,23 @@ export const authMiddleware = (
   next: NextFunction
 ) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith('Bearer ')) return res.sendStatus(401); // unauthorized
+  if (!authHeader?.startsWith('Bearer ')) {
+    return res.sendStatus(401);
+  } // unauthorized
 
   const token = authHeader.split(' ')[1];
   jwt.verify(
     token,
     process.env.ACCESS_TOKEN_SECRET,
     (err: any, decoded: any) => {
-      if (err) return res.sendStatus(403); // invalid token
-      const { username, userid } = decoded;
+      if (err) {
+        return res.sendStatus(403);
+      } // invalid token
+      const { username, id, pfp } = decoded;
       req.locals = {
         username,
-        userid
+        id,
+        pfp
       };
       next();
     }

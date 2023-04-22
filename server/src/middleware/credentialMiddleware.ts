@@ -7,6 +7,7 @@ export const credentialMiddleware = (
   next: NextFunction
 ) => {
   const origin = req.headers.origin;
+
   if (allowedOrigins.indexOf(origin!) !== -1)
     res.header('Access-Control-Allow-Credentials', 'true');
 

@@ -1,34 +1,29 @@
 import bcrypt from 'bcrypt';
-import crypto from 'crypto';
 import type { Request, Response } from 'express';
-import { checkDuplicate, create } from '@/models/userModel';
-import { createVerifyCode } from '@/models/verifyModel';
+import { createUser, setRefreshToken } from '@/models/authModel';
+import { createTokens, jwtCookieOptions } from '@/utils/JWTUtils';
 
 export default async function registerController(req: Request, res: Response) {
-  const { email, password, username } = req.body;
-
-  const dupe = await checkDuplicate(email, username);
-  if (dupe)
-    return res.status(409).json({
-      message: `${
-        dupe.username === username
-          ? 'username already exists!'
-          : 'email already exists!'
-      }`
-    });
-
+  const { email, password, username, displayname } = req.body;
   try {
     const encrypted_password = await bcrypt.hash(password, 10);
-    const id = await create(username, email, encrypted_password);
-
-    res.status(201).json({ message: 'Created' });
-    await createVerifyCode(
-      id,
+    const id = await createUser(
       email,
-      crypto.randomUUID().replace(/-/g, '').substring(0, 12)
+      encrypted_password,
+      username,
+      displayname
     );
-  } catch (err) {
+    const [accessToken, refreshToken] = createTokens(id);
+
+    // set refresh token and save
+    await setRefreshToken(id, refreshToken);
+
+    res.cookie('jwt', refreshToken, jwtCookieOptions);
+    return res.status(201).json({
+      token: accessToken
+    });
+  } catch (err: any) {
     console.log(err);
-    res.status(500).json({ message: (err as Error).message });
+    res.sendStatus(409);
   }
 }
