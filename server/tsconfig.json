@@ -10,7 +10,9 @@
     "rootDir": "./src",
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["*"]
+      "@/*": ["*"],
+      "@common/*": ["../../common/src/*"]
     }
-  }
+  },
+  "references": [{ "path": "../common" }]
 }
