@@ -1,8 +1,9 @@
 declare namespace Express {
   export interface Request {
     locals: {
-      userid: number;
+      id: number;
       username: string;
+      pfp: string;
     };
   }
 }
