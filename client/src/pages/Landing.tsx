@@ -1,14 +1,11 @@
-import { Button, SignInModal, SignUpModal } from '@/components';
-
-import { useState } from 'react';
+import { Button } from '@/components';
+import { useNavigate } from 'react-router-dom';
 
 function Landing() {
-  const [openSignIn, setSignIn] = useState(false);
-  const [openSignUp, setSignUp] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <>
-      <div className='bg-inherit'></div>
       <div className='fixed bottom-0 bg-blue-400 w-full py-4'>
         <div className='flex justify-around gap-6 bg-inherit'>
           <div className='flex flex-col justify-start bg-inherit'>
@@ -21,19 +18,20 @@ function Landing() {
           </div>
           <div className='flex justify-center items-center bg-inherit gap-2'>
             <Button
-              color='bordered-default'
-              onClick={() => setSignIn((v) => !v)}
+              color='outline-default'
+              onClick={() => navigate('/i/flow/login', { replace: true })}
             >
               Sign In
             </Button>
-            <Button color='white' onClick={() => setSignUp((v) => !v)}>
+            <Button
+              color='white'
+              onClick={() => navigate('/i/flow/register', { replace: true })}
+            >
               Sign Up
             </Button>
           </div>
         </div>
       </div>
-      <SignInModal open={openSignIn} setOpen={setSignIn} />
-      <SignUpModal open={openSignUp} setOpen={setSignUp} />
     </>
   );
 }

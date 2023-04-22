@@ -1,6 +1,6 @@
 import type { IconType } from 'react-icons';
 import { Link } from 'react-router-dom';
-import { AiOutlineTwitter, AiOutlineHome, AiFillHome } from 'react-icons/ai';
+import { AiOutlineTwitter } from 'react-icons/ai';
 import { FaHashtag } from 'react-icons/fa';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import {
@@ -14,42 +14,49 @@ import {
 import { useContext, useState } from 'react';
 import { SidebarContext } from '@/context/SidebarContext';
 import { useAuth } from '@/hooks/AuthHook';
-import { useUser } from '@/hooks/UserHook';
-import type { User } from '@/hooks/UserHook';
-import { FieldValues, useForm } from 'react-hook-form';
-import { useAddTweetMutation } from '@/redux/features/tweets/tweetService';
-import ResizableTextarea from '../form/ResizableTextarea';
-import { Modal, Divider } from 'react-daisyui';
+import { Modal, Divider, Textarea } from '@mantine/core';
+import { useUserStore } from '@/utils/storage';
+import Dropdown, { ElementType } from '../Dropdown';
+import { useForm } from '@mantine/form';
+import validator from 'validator';
+import { useMutation } from 'react-query';
+import { logoutUser } from '@/api/authAPI';
+import { createTweet } from '@/api/tweetAPI';
+import { queryClient } from '@/api/api';
+import { LatestTweetsType } from '@common/types/Endpoints';
 
 function Sidebar() {
-  const { token, logout } = useAuth();
-  const user = useUser(token);
-  const [open, setOpen] = useState(false);
+  const [openModal, setModalOpen] = useState(false);
+  const [reference, setReference] = useState<ElementType>(null);
   const [dropdown, setDropDown] = useState(false);
+  const { logout } = useAuth();
+  const logoutMutation = useMutation({
+    mutationFn: logoutUser
+  });
+  const { result } = useUserStore();
+
+  const handleLogout = async () => {
+    await logoutMutation.mutateAsync();
+    logout();
+  };
 
   return (
     <>
-      <TweetModal open={open} setOpen={setOpen} user={user!} />
-      <header className='flex flex-col justify-between pt-2.5 pb-2.5 pl-[13%] w-[29%] h-full fixed'>
-        <div className='flex flex-col w-full h-1/2 justify-between'>
-          <SidebarItem Icon={AiOutlineTwitter} first to='/' />
-          <SidebarItem
-            Icon={AiOutlineHome}
-            ActiveIcon={AiFillHome}
-            to='/'
-            text='Home'
-          />
+      <TweetModal open={openModal} setOpen={setModalOpen} />
+      <header className='hidden md:flex flex-col justify-between pt-2.5 pb-2.5 pl-3 lg:pl-[12%] w-[7%] lg:w-[29%] h-full fixed'>
+        <div className='flex flex-col items-center lg:items-start w-fit lg:w-full h-1/2 justify-between'>
+          <SidebarItem Icon={AiOutlineTwitter} first to='/explore' />
           <SidebarItem Icon={FaHashtag} to='/explore' text='Explore' />
           <SidebarItem
             Icon={MdOutlineBookmarkBorder}
             ActiveIcon={MdOutlineBookmark}
-            to='/'
+            to='/bookmarks'
             text='Bookmarks'
           />
           <SidebarItem
             Icon={MdOutlinePersonOutline}
             ActiveIcon={MdPerson}
-            to='/'
+            to='/profile'
             text='Profile'
           />
           <SidebarItem
@@ -59,41 +66,55 @@ function Sidebar() {
             text='Settings'
           />
           <button
-            className='w-11/12 bg-blue-500 rounded-full hover:bg-blue-400 px-2 py-4 text-md cursor-pointer font-medium mt-4 transition-colors'
-            onClick={() => setOpen(true)}
+            className='hidden lg:block w-11/12 bg-blue-500 rounded-full hover:bg-blue-400 px-2 py-4 text-md cursor-pointer font-medium mt-4 transition-colors'
+            onClick={() => setModalOpen(true)}
           >
             Tweet
           </button>
         </div>
-        <div className='w-full h-1/3 pt-36'>
+        <div className='hidden md:block w-full h-1/3 pt-36'>
           <div className='relative inline-block w-full'>
-            <div className='flex justify-between items-center py-4 pr-2.5 pl-4 mr-3 hover:rounded-full hover:bg-bordergray'>
+            <div
+              className='flex justify-between items-center py-4 lg:pr-2.5 lg:pl-4 mr-3 hover:rounded-full hover:bg-bordergray w-full'
+              ref={setReference}
+            >
               <img
                 crossOrigin='anonymous'
-                src={`${user?.pfp || 'defaultpfp.png'}`}
+                src={`${result?.pfp || 'defaultpfp.png'}`}
                 alt='profile picture'
-                className='w-10 h-10 rounded-full bg-white'
+                className='w-10 h-10 object-fit rounded-full bg-white'
               />
-              <div className='flex flex-col basis-[60%] justify-center'>
-                <span className='text-md font-medium'>{user?.username}</span>
-                <span className='text-sm text-gray-500'>@{user?.username}</span>
+              <div className='hidden lg:flex flex-col basis-[60%] justify-center'>
+                <p className='text-md font-medium w-10/12 truncate'>
+                  {result?.displayname}
+                </p>
+                <span className='text-sm text-gray-500'>
+                  @{result?.username}
+                </span>
               </div>
-              <button onClick={() => setDropDown((v) => !v)}>
-                <FiMoreHorizontal className='text-2xl' />
+              <button
+                className='hidden lg:block'
+                onClick={() => setDropDown((v) => !v)}
+              >
+                <FiMoreHorizontal className='text-xl' />
               </button>
             </div>
-            {dropdown && (
-              <div className='absolute bottom-[50px] w-10/12 shadow shadow-gray-500 rounded-lg mb-9 ml-2.5 py-2.5'>
-                <Divider className='m-0' />
-                <Link
-                  to='/'
-                  className='block text-red-500 font-bold w-full text-sm py-2 px-4 hover:bg-bordergray'
-                  onClick={() => logout()}
-                >
-                  Logout
-                </Link>
-              </div>
-            )}
+            <Dropdown
+              className='shadow shadow-gray-500 py-2.5 w-10/12 rounded-lg bg-black'
+              open={dropdown}
+              setOpen={setDropDown}
+              reference={reference}
+              placement='top'
+            >
+              <Divider className='m-0' />
+              <Link
+                to='/'
+                className='block text-red-500 font-bold w-full text-sm py-2 px-4 hover:bg-bordergray'
+                onClick={handleLogout}
+              >
+                Logout
+              </Link>
+            </Dropdown>
           </div>
         </div>
       </header>
@@ -115,17 +136,21 @@ function SidebarItem({ Icon, ActiveIcon, to, text, first }: SidebarProps) {
   return (
     <Link
       to={to}
-      className={`flex items-center text-3xl ${
-        first ? 'px-2 py-2' : 'p-3 pr-10'
+      className={`flex items-center justify-center text-3xl ${
+        first ? 'lg:px-2 lg:py-2' : 'pr-3 p-3 lg:pr-10'
       } w-fit hover:rounded-full hover:bg-bordergray`}
     >
       {bold && !!ActiveIcon ? (
-        <ActiveIcon className='text-2xl mr-6' />
+        <ActiveIcon className='text-2xl lg:mr-6' />
       ) : (
-        <Icon className={`text-2xl ${!first && 'mr-6'}`} />
+        <Icon className={`text-2xl ${!first && 'lg:mr-6'}`} />
       )}
       {text && (
-        <span className={`text-xl ${bold ? 'font-bold' : 'font-normal'}`}>
+        <span
+          className={`hidden lg:block text-xl ${
+            bold ? 'font-bold' : 'font-normal'
+          }`}
+        >
           {text}
         </span>
       )}
@@ -134,24 +159,43 @@ function SidebarItem({ Icon, ActiveIcon, to, text, first }: SidebarProps) {
 }
 
 function TweetModal({
-  user,
   open,
   setOpen
 }: {
-  user: User;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const { register, handleSubmit: formSubmit } = useForm();
-  const [tweet] = useAddTweetMutation();
+  const form = useForm({
+    initialValues: {
+      text: ''
+    },
+    validate: {
+      text: (value) =>
+        validator.isLength(value, { min: 1, max: 280 })
+          ? null
+          : 'text length should be 1-280'
+    }
+  });
+  const { result: user } = useUserStore();
 
-  const onSubmit = async (data: FieldValues) => {
+  const addTweet = useMutation({
+    mutationFn: createTweet,
+    onSuccess: (data) => {
+      queryClient.setQueryData<LatestTweetsType[]>(['Tweet'], (old) => [
+        {
+          ...user,
+          ...data
+        },
+        ...old!
+      ]);
+      queryClient.setQueryData(['Tweet', data.id], data);
+    }
+  });
+
+  const handleSubmit = async (data: any) => {
     const { text } = data;
     try {
-      const result = await tweet({
-        text
-      });
-      console.log(result);
+      await addTweet.mutateAsync(text);
     } catch (err: any) {
       throw err;
     } finally {
@@ -159,7 +203,12 @@ function TweetModal({
     }
   };
   return (
-    <Modal open={open} onClickBackdrop={() => setOpen(false)}>
+    <Modal
+      opened={open}
+      onClose={() => setOpen(false)}
+      size='lg'
+      closeOnClickOutside
+    >
       <div className='flex w-full py-8 px-4'>
         <img
           crossOrigin='anonymous'
@@ -168,15 +217,24 @@ function TweetModal({
           alt='tweet profile picture'
         />
         <form
-          onSubmit={formSubmit(onSubmit)}
+          onSubmit={form.onSubmit(handleSubmit)}
           className='flex flex-col min-h-16 justify-evenly pt-1 w-full ml-3'
         >
-          <ResizableTextarea
+          <Textarea
             className='w-full bg-black border-none outline-none text-md resize-none overflow-hidden placeholder:text-gray-500'
             placeholder="what's happening?"
             maxLength={250}
             name='text'
-            register={register}
+            autosize
+            minRows={3}
+            maxRows={10}
+            styles={{
+              input: {
+                border: 'none',
+                outline: 'none'
+              }
+            }}
+            {...form.getInputProps('text')}
           />
           <div className='flex gap-2 w-full justify-end mt-3 items-center'>
             <button
