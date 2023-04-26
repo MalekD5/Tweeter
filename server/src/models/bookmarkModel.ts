@@ -1,12 +1,32 @@
-import { pool, bookmarkTable, tweetsTable, userTable } from '@/mysql';
+import {
+  pool,
+  bookmarkTable,
+  tweetsTable,
+  userTable,
+  commentsTable
+} from '@/mysql';
 import { transformTweets } from '@/utils/ModelUtils';
 
 import type { RowDataPacket } from 'mysql2';
 import type { Tweet } from './tweetModel';
 
-interface BookmarkRowData extends RowDataPacket {
+export interface BookmarkRowData extends RowDataPacket {
   user_id: string;
   tweet: string;
+}
+
+export async function getBookmarksFromTweet(tweet_id: string, user_id: number) {
+  const [bookmarks] = await pool.query<BookmarkRowData[]>(
+    `
+   SELECT DISTINCT tweet 'id' FROM ${bookmarkTable}
+  WHERE user_id=? AND (tweet=? OR tweet IN (
+  SELECT comment_id FROM ${commentsTable} WHERE replying_to=?
+  )) `,
+    [user_id, tweet_id, tweet_id]
+  );
+
+  if (bookmarks.length === 0) return [];
+  return bookmarks.map((x) => x.tweet);
 }
 
 export async function getBookmarks(user_id: number, offset = 0) {
