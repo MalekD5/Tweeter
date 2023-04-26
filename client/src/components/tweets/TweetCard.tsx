@@ -10,15 +10,23 @@ import { FiDelete, FiMoreHorizontal } from 'react-icons/fi';
 import { BiBookmarkMinus, BiBookmarkPlus } from 'react-icons/bi';
 import { useHover } from '@mantine/hooks';
 import { useMutation } from 'react-query';
-import { DeleteTweet, LikeTweet, UnlikeTweet } from '@/api/tweetAPI';
+import {
+  DeleteTweet,
+  LikeTweet,
+  UnlikeTweet,
+  createRetweet,
+  removeRetweet
+} from '@/api/tweetAPI';
 import { queryClient } from '@/api/api';
 import { BookmarkTweet, UnBookmarkTweet } from '@/api/bookmarkAPI';
 import type { LatestTweetsType } from '@common/types/Endpoints';
 import type { IconType } from 'react-icons';
 import Dropdown, { type ElementType } from '../Dropdown';
+import { Text } from '@mantine/core';
 
 type TweetProps = {
   tweet: LatestTweetsType;
+  showRetweets?: boolean;
 };
 
 type TweetOptionButtonProps = { onClick: () => void } & React.PropsWithChildren;
@@ -54,17 +62,33 @@ function TweetCardV3(props: TweetProps) {
   const [open, setOpen] = useState(false);
   const [reference, setReference] = useState<ElementType>(null);
 
+  const onSuccess = () => {
+    queryClient.invalidateQueries(['Tweet'], { exact: true });
+  };
+
   const likeMutation = useMutation({
     mutationFn: LikeTweet,
-    onSuccess: (_data) => {
-      queryClient.invalidateQueries(['Tweet'], { exact: true });
-    }
+    onSuccess
   });
 
   const unLikeMutation = useMutation({
     mutationFn: UnlikeTweet,
+    onSuccess
+  });
+
+  const retweetMutation = useMutation({
+    mutationFn: createRetweet,
     onSuccess: () => {
-      queryClient.invalidateQueries(['Tweet']);
+      onSuccess();
+      queryClient.invalidateQueries(['User'], { exact: true });
+    }
+  });
+
+  const unRetweetMutation = useMutation({
+    mutationFn: removeRetweet,
+    onSuccess: () => {
+      onSuccess();
+      queryClient.invalidateQueries(['User'], { exact: true });
     }
   });
 
@@ -80,65 +104,89 @@ function TweetCardV3(props: TweetProps) {
     }
   };
 
+  const handleRetweetButton = async () => {
+    try {
+      if (!tweet.isRetweeted) {
+        await retweetMutation.mutateAsync(tweet.id);
+      } else {
+        await unRetweetMutation.mutateAsync(tweet.id);
+      }
+    } catch (err: any) {
+      throw err;
+    }
+  };
+
   return (
-    <div className='flex py-3 px-4 gap-2 w-full border-t border-t-bordergray border-b border-b-bordergray'>
-      {/* img */}
-      <img
-        crossOrigin='anonymous'
-        src={tweet.pfp || 'defaultpfp.png'}
-        alt='tweet profile picture'
-        className='h-14 w-14 rounded-full bg-white mt-2'
-      />
-      <div className='basis-10/12 flex flex-col w-full py-2'>
-        <div className='flex justify-between items-center'>
-          <div className='flex gap-1 text-sm'>
-            <span className='font-semibold'>{tweet.displayname}</span>
-            <span className='text-textgray'>
-              @{tweet.username} · {tweet.created_at}
-            </span>
-          </div>
-          <button
-            className='z-20'
-            onClick={() => setOpen((v) => !v)}
-            ref={setReference}
-          >
-            <FiMoreHorizontal />
-          </button>
-
-          <TweetOptions
-            reference={reference}
-            open={open}
-            setOpen={setOpen}
-            isAuthor={tweet.isAuthor}
-            isBookmarked={tweet.isBookmarked}
-            id={tweet.id}
-          />
+    <div className='py-3 px-4 w-full border-t border-t-bordergray border-b border-b-bordergray'>
+      {tweet.isRetweeted && props.showRetweets && (
+        <div className='ml-5 flex gap-3 items-center w-fit'>
+          <AiOutlineRetweet className='text-md fill-textgray' />
+          <Text className='text-sm text-textgray hover:underline hover:cursor-pointer'>
+            You Retweeted
+          </Text>
         </div>
+      )}
+      <div className='flex w-full gap-2'>
+        {/* img */}
+        <img
+          crossOrigin='anonymous'
+          src={tweet.pfp || 'defaultpfp.png'}
+          alt='tweet profile picture'
+          className='h-14 w-14 rounded-full bg-white mt-2'
+        />
+        <div className='basis-10/12 flex flex-col w-full py-2'>
+          <div className='flex justify-between items-center'>
+            <div className='flex gap-1 text-sm'>
+              <span className='font-semibold'>{tweet.displayname}</span>
+              <span className='text-textgray'>
+                @{tweet.username} · {tweet.created_at}
+              </span>
+            </div>
+            <button
+              className='z-20'
+              onClick={() => setOpen((v) => !v)}
+              ref={setReference}
+            >
+              <FiMoreHorizontal />
+            </button>
 
-        <p className='mt-0.5 w-11/12 break-words text-sm font-normal'>
-          {tweet.text}
-        </p>
-        <div className='w-9/12 mt-3 flex justify-between items-center'>
-          <TweetButton
-            onClick={() => {}}
-            Icon={FaRegComment}
-            count={tweet.comments}
-          />
-          <TweetButton
-            onClick={() => {}}
-            Icon={AiOutlineRetweet}
-            count={tweet.retweets}
-            color='green'
-          />
-          <TweetButton
-            onClick={handleLikeButton}
-            active={tweet.isLiked}
-            ActiveIcon={AiFillHeart}
-            Icon={AiOutlineHeart}
-            count={tweet.likes}
-            color='red'
-          />
-          <TweetButton onClick={() => {}} Icon={AiOutlineShareAlt} />
+            <TweetOptions
+              reference={reference}
+              open={open}
+              setOpen={setOpen}
+              isAuthor={tweet.isAuthor}
+              isBookmarked={tweet.isBookmarked}
+              id={tweet.id}
+            />
+          </div>
+
+          <p className='mt-0.5 w-11/12 break-words text-sm font-normal'>
+            {tweet.text}
+          </p>
+          <div className='w-9/12 mt-3 flex justify-between items-center'>
+            <TweetButton
+              onClick={() => {}}
+              Icon={FaRegComment}
+              count={tweet.comments}
+            />
+            <TweetButton
+              onClick={handleRetweetButton}
+              Icon={AiOutlineRetweet}
+              count={tweet.retweets}
+              active={tweet.isRetweeted}
+              ActiveIcon={AiOutlineRetweet}
+              color='green'
+            />
+            <TweetButton
+              onClick={handleLikeButton}
+              active={tweet.isLiked}
+              ActiveIcon={AiFillHeart}
+              Icon={AiOutlineHeart}
+              count={tweet.likes}
+              color='red'
+            />
+            <TweetButton onClick={() => {}} Icon={AiOutlineShareAlt} />
+          </div>
         </div>
       </div>
     </div>
@@ -183,7 +231,7 @@ function TweetButton({
       {formatted_count && (
         <span
           className={`${
-            hovered ? col[2] : 'text-textgray'
+            active ? col[2] : 'text-textgray'
           } text-xs  transition-colors`}
         >
           {formatted_count}
@@ -308,7 +356,8 @@ TweetCardV3.defaultProps = {
   retweets: '',
   likes: '',
   comments: '',
-  bookmarked: false
+  bookmarked: false,
+  showRetweets: false
 };
 
 TweetButton.defaultProps = {

@@ -62,3 +62,16 @@ export async function createTweet(text: string) {
   );
   return req?.data;
 }
+
+export async function createRetweet(tweet_id: string) {
+  const config = prepareToken();
+  await instanceWithRefresh.post('/retweet', { tweet_id }, config);
+}
+
+export async function removeRetweet(tweet_id: string) {
+  const config = prepareToken();
+  await instanceWithRefresh.delete('/retweet', {
+    ...config,
+    params: { id: tweet_id }
+  });
+}
