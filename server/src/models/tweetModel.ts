@@ -248,11 +248,28 @@ type Comments = (RowDataPacket & {
   replying_to: string;
 })[];
 
-export async function removeComment(comment_id: string) {
+export async function removeComment(comment_id: string, author: number) {
   let con = null;
   try {
     con = await pool.getConnection();
     await con.beginTransaction();
+    const [tweets] = await con.query<Tweet[]>(
+      `SELECT author FROM ${tweetsTable} WHERE id=?`,
+      comment_id
+    );
+
+    if (tweets.length === 0) {
+      return {
+        error: 'comment does not exists'
+      };
+    }
+
+    const tweet = tweets[0];
+    if (tweet.author !== author) {
+      return {
+        error: 'not author'
+      };
+    }
     await con.execute(`DELETE FROM ${tweetsTable} WHERE id=?`, [comment_id]);
     await con.execute(`DELETE FROM ${commentsTable} WHERE comment_id=?`, [
       comment_id

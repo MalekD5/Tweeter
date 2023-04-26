@@ -5,6 +5,7 @@ import likeRoute from './tweets/likes.route';
 import uploadRouter from './upload/upload.route';
 import bookmarkRoute from './bookmark/bookmark.route';
 import profileRoute from './profile/profile.route';
+import commentRoute from './tweets/comment.route';
 import {
   registerRoute,
   loginRoute,
@@ -28,6 +29,7 @@ router.use(authMiddleware);
 router.use('/upload', uploadRouter);
 router.use('/tweet', tweetRouter);
 router.use('/tweet/like', likeRoute);
+router.use('/comment', commentRoute);
 router.use('/retweet', retweetRouter);
 router.use('/bookmarks', bookmarkRoute);
 router.use('/profile', profileRoute);

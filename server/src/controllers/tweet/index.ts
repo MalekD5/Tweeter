@@ -6,3 +6,5 @@ export { default as LikeController } from './likes/like.controller';
 export { default as UnlikeController } from './likes/unlike.controller';
 export { default as RetweetController } from './retweet/retweet.controller';
 export { default as UnRetweetController } from './retweet/unretweet.controller';
+export { default as CommentController } from './comment/addComment.controller';
+export { default as UnCommentController } from './comment/removeComment.controller';
