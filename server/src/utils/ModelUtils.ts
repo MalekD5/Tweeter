@@ -1,6 +1,6 @@
-import { type Tweet } from '@/models/tweetModel';
 import { formatDistanceToNow, parseISO } from 'date-fns';
-import { type RowDataPacket } from 'mysql2';
+import type { RowDataPacket } from 'mysql2';
+import type { Retweet, Tweet } from '@/models/tweetModel';
 
 export function exists(response: RowDataPacket[] | undefined) {
   return response?.length !== 0;
@@ -23,6 +23,42 @@ export function transformTweets(tweets: Tweet[]) {
 
 type TweetsArray = Tweet[];
 
+export function transformDataForUser(
+  user_id: number,
+  tweets: TweetsArray,
+  bookmarks: string[] | boolean,
+  likes: string[],
+  retweets?: Retweet[]
+) {
+  let order = tweets;
+
+  if (retweets) {
+    order = tweets
+      .map((data) => {
+        const retweetData = retweets?.find((x) => x.tweet_id === data.id);
+        const sort_date =
+          (retweetData?.created_at && new Date(retweetData.created_at)) ||
+          new Date(data.created_at);
+
+        return {
+          ...data,
+          sort_date
+        };
+      })
+      .sort((a, b) => {
+        return b.sort_date.getTime() - a.sort_date.getTime();
+      });
+  }
+
+  return transformData(
+    user_id,
+    order,
+    bookmarks,
+    likes,
+    retweets?.map((x) => x.tweet_id)
+  );
+}
+
 export function transformData(
   user_id: number,
   tweets: TweetsArray,
@@ -30,7 +66,7 @@ export function transformData(
   likes: string[],
   retweets?: string[]
 ) {
-  return tweets.map(({ pfp, content, created_at, ...x }) => ({
+  return tweets.map(({ pfp, content, created_at, sort_date, ...x }) => ({
     ...x,
     text: content,
     pfp: pfp ? `http://localhost:5000/images/${pfp}` : undefined,

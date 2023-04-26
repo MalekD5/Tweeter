@@ -189,17 +189,17 @@ export async function getLikes(user_id: number) {
   return result.map((x) => x.tweet_id);
 }
 
-type Retweet = Likes & {
+export type Retweet = Likes & {
   created_at: string;
 };
 
 export async function getRetweets(user_id: number) {
   const [result] = await pool.query<Retweet[]>(
-    `SELECT tweet_id from ${retweetsTable} WHERE user_id=?`,
+    `SELECT tweet_id,created_at from ${retweetsTable} WHERE user_id=?`,
     [user_id]
   );
   if (result.length === 0) return [];
-  return result.map((x) => x.tweet_id);
+  return result;
 }
 
 export async function getComments(tweet_id: string) {
