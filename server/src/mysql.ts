@@ -36,7 +36,7 @@ const LIKES_TABLE_QUERY = `CREATE TABLE IF NOT EXISTS ${likesTable} (user_id INT
 
 const RETWEET_TABLE_QUERY = `CREATE TABLE IF NOT EXISTS ${retweetsTable} (user_id INT NOT NULL, tweet_id VARCHAR(36) NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES ${authTable}(id), FOREIGN KEY (tweet_id) REFERENCES ${tweetsTable}(id) ON DELETE CASCADE, PRIMARY KEY (user_id, tweet_id))`;
 
-const COMMENTS_TABLE_QUERY = `CREATE TABLE IF NOT EXISTS ${commentsTable} (replying_to VARCHAR(36) NOT NULL, comment_id VARCHAR(36) NOT NULL, FOREIGN KEY (replying_to) REFERENCES ${tweetsTable}(id) ON DELETE CASCADE, FOREIGN KEY (comment_id) REFERENCES ${tweetsTable}(id) ON DELETE CASCADE, PRIMARY KEY (comment_id))`;
+const COMMENTS_TABLE_QUERY = `CREATE TABLE IF NOT EXISTS ${commentsTable} (replying_to VARCHAR(36) NOT NULL, comment_id VARCHAR(36) NOT NULL, author INT NOT NULL, FOREIGN KEY (replying_to) REFERENCES ${tweetsTable}(id) ON DELETE CASCADE, FOREIGN KEY (comment_id) REFERENCES ${tweetsTable}(id) ON DELETE CASCADE, FOREIGN KEY (author) REFERENCES ${authTable}(id), PRIMARY KEY (comment_id))`;
 
 export async function connect() {
   const connection = await pool.getConnection();
