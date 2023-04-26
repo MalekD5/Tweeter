@@ -250,7 +250,8 @@ function SignUpStep3(props: Step3Props) {
   const { email, password, displayname } = props;
   const [opened, handlers] = useDisclosure(false);
   const registerMutation = useMutation({
-    mutationFn: registerUser
+    mutationFn: registerUser,
+    useErrorBoundary: false
   });
   const navigate = useNavigate();
 

@@ -120,7 +120,10 @@ type LoginModalProps = {
 
 function LoginModal(props: LoginModalProps) {
   const [opened, handlers] = useDisclosure(false);
-  const { mutateAsync } = useMutation(loginUser);
+  const { mutateAsync } = useMutation({
+    mutationFn: loginUser,
+    useErrorBoundary: false
+  });
 
   const nav = useNavigate();
 
