@@ -28,7 +28,7 @@ export interface Tweet extends RowDataPacket {
 }
 
 const INSERT_TWEET = `INSERT INTO ${tweetsTable}(id, content, author, type) VALUES(?,?,?,?)`;
-const SELECT_TOP_10_TWEETS = `SELECT t.*, u.pfp, u.username, u.displayname FROM ${tweetsTable} as t, ${userTable} as u WHERE t.author=u.id ORDER BY t.created_at DESC LIMIT 10;`;
+const SELECT_TOP_10_TWEETS = `SELECT t.*, u.pfp, u.username, u.displayname FROM ${tweetsTable} as t, ${userTable} as u WHERE t.author=u.id AND type='TEXT' ORDER BY t.created_at DESC LIMIT 10;`;
 const VERIFY_OWNERSHIP = `SELECT author FROM ${tweetsTable} WHERE id=?`;
 
 function generateId() {
