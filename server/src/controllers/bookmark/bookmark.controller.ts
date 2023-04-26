@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { getBookmarks } from '@/models/bookmarkModel';
-import { getLikes } from '@/models/tweetModel';
+import { getLikes, getRetweets } from '@/models/tweetModel';
 import { transformData } from '@/utils/ModelUtils';
 
 export default async function BookmarkController(req: Request, res: Response) {
@@ -9,7 +9,8 @@ export default async function BookmarkController(req: Request, res: Response) {
   try {
     const bookmarks = await getBookmarks(id, isNaN(offset) ? 0 : offset);
     const likes = await getLikes(id);
-    const data = transformData(id, bookmarks, true, likes);
+    const retweets = (await getRetweets(id))?.map((x) => x.tweet_id);
+    const data = transformData(id, bookmarks, true, likes, retweets);
 
     res.status(200).json(data);
   } catch (err: any) {
