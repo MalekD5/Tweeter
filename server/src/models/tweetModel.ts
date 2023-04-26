@@ -101,10 +101,10 @@ export async function addRetweet(user_id: number, tweet_id: string) {
   try {
     con = await pool.getConnection();
     await con.beginTransaction();
-    await con.execute(`INSERT INTO ${retweetsTable} VALUES(?,?)`, [
-      user_id,
-      tweet_id
-    ]);
+    await con.execute(
+      `INSERT INTO ${retweetsTable}(user_id, tweet_id) VALUES(?,?)`,
+      [user_id, tweet_id]
+    );
 
     await con.execute(
       `UPDATE ${tweetsTable} SET retweets=retweets+1 WHERE id=?`,
