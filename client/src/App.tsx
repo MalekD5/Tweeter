@@ -8,14 +8,16 @@ import {
   Login,
   Register
 } from '@/pages';
-import { Layout, Authenticated } from '@/components';
+import { Layout, Authenticated, SignedOut } from '@/components';
 
 function App() {
   return (
     <Routes>
-      <Route path='/' element={<Landing />} />
-      <Route path='i/flow/login' element={<Login />} />
-      <Route path='i/flow/register' element={<Register />} />
+      <Route element={<SignedOut />}>
+        <Route path='/' element={<Landing />} />
+        <Route path='i/flow/login' element={<Login />} />
+        <Route path='i/flow/register' element={<Register />} />
+      </Route>
       <Route element={<Authenticated />}>
         <Route element={<Layout />}>
           <Route path='/explore' element={<Explore />} />
