@@ -1,7 +1,8 @@
 import express from 'express';
 import { CommentController, UnCommentController } from '@/controllers/tweet';
-import { ValidationChain, body, query } from 'express-validator';
+import { ValidationChain, body, param, query } from 'express-validator';
 import { validationMiddleware } from '@/middleware/validationMiddleware';
+import GetCommentsController from '@/controllers/tweet/comment/getComments.controller';
 
 const router = express.Router();
 
@@ -24,5 +25,11 @@ router
     [validate(query('comment_id')), validationMiddleware],
     UnCommentController
   );
+
+router.get(
+  '/:id',
+  [validate(param('id')), validationMiddleware],
+  GetCommentsController
+);
 
 export default router;
