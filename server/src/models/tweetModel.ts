@@ -10,6 +10,8 @@ import {
 } from '../mysql';
 
 import type { ResultSetHeader, RowDataPacket } from 'mysql2';
+import { getBookmarksFromTweet } from './bookmarkModel';
+import { transformData } from '@/utils/ModelUtils';
 
 export interface Tweet extends RowDataPacket {
   id: string;
@@ -39,6 +41,44 @@ export async function createTweet(author: number, text: string) {
   await pool.execute(INSERT_TWEET, [tweet_id, text, author, 'TEXT']);
 
   return tweet_id;
+}
+
+export async function getTweet(tweet_id: string, user_id: number) {
+  const [tweets] = await pool.query<Tweet[]>(
+    `SELECT t.*, u.username, u.displayname, u.pfp FROM ${tweetsTable} AS t, ${userTable} AS u WHERE t.id=? AND t.author=u.id;`,
+    [tweet_id]
+  );
+  if (tweets.length === 0) return {};
+  const tweet = tweets[0];
+  const comments = await getComments(tweet_id);
+  const [likes] = await pool.query<Likes[]>(
+    `
+  SELECT DISTINCT tweet_id FROM ${likesTable}
+  WHERE user_id=? AND (tweet_id=? OR tweet_id IN (
+  SELECT comment_id FROM ${commentsTable} WHERE replying_to=?
+  )) 
+  `,
+    [user_id, tweet_id, tweet_id]
+  );
+
+  const bookmarks = await getBookmarksFromTweet(tweet_id, user_id);
+  const [retweets] = await pool.query<Retweet[]>(
+    `
+  SELECT DISTINCT tweet_id FROM ${retweetsTable}
+  WHERE user_id=? AND (tweet_id=? OR tweet_id IN (
+  SELECT comment_id FROM ${commentsTable} WHERE replying_to=?
+  )) 
+  `,
+    [user_id, tweet_id, tweet_id]
+  );
+
+  const tLikes = likes?.map((x) => x.tweet_id);
+  const tRetweets = retweets?.map((x) => x.tweet_id);
+
+  return {
+    tweet: transformData(user_id, [tweet], bookmarks, tLikes, tRetweets),
+    comments: transformData(user_id, comments, bookmarks, tLikes, tRetweets)
+  };
 }
 
 export async function retrieveTopTweets() {
@@ -204,7 +244,7 @@ export async function getRetweets(user_id: number) {
 
 export async function getComments(tweet_id: string) {
   const [comments] = await pool.query<Tweet[]>(
-    `SELECT r.*, u.username, u.displayname, u.pfp FROM (SELECT t.* FROM ${tweetsTable} WHERE t.id IN (SELECT comment_id FROM ${commentsTable} WHERE replying_to=?)) AS r, ${userTable} as u WHERE r.author=u.id ORDER BY r.created_at DESC LIMIT 50`,
+    `SELECT r.*, u.username, u.displayname, u.pfp FROM (SELECT t.* FROM ${tweetsTable} AS t WHERE t.id IN (SELECT comment_id FROM ${commentsTable} WHERE replying_to=?)) AS r, ${userTable} as u WHERE r.author=u.id ORDER BY r.created_at DESC LIMIT 50`,
     [tweet_id]
   );
   if (comments.length === 0) return [];
@@ -254,7 +294,7 @@ export async function removeComment(comment_id: string, author: number) {
     con = await pool.getConnection();
     await con.beginTransaction();
     const [tweets] = await con.query<Tweet[]>(
-      `SELECT author FROM ${tweetsTable} WHERE id=?`,
+      `SELECT author FROM ${tweetsTable} WHERE id=? AND type='COMMENT'`,
       comment_id
     );
 
