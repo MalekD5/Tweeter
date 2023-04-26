@@ -1,3 +1,4 @@
+import { TweetType } from '@common/types/Main';
 import { instanceWithRefresh, prepareToken } from './api';
 import {
   GetLatestTweetsResponse,
@@ -7,7 +8,7 @@ import {
 export async function getExploreTweets() {
   const config = prepareToken();
   const req = await instanceWithRefresh.get<GetLatestTweetsResponse>(
-    '/tweet',
+    '/tweet/explore',
     config
   );
   return req?.data;
@@ -74,4 +75,40 @@ export async function removeRetweet(tweet_id: string) {
     ...config,
     params: { id: tweet_id }
   });
+}
+
+export async function getComments(tweet_id: string) {
+  const config = prepareToken();
+  const res = await instanceWithRefresh.get<TweetType[]>(
+    `/comment/${tweet_id}`,
+    config
+  );
+  return res?.data;
+}
+
+export async function getId(tweet_id: string) {
+  const config = prepareToken();
+  const res = await instanceWithRefresh.get<{
+    tweet: LatestTweetsType[];
+    comments: LatestTweetsType[];
+  }>(`/tweet/id/${tweet_id}`, config);
+  return res?.data;
+}
+
+export async function addComment({
+  replying_to,
+  text
+}: {
+  replying_to: string;
+  text: string;
+}) {
+  const config = prepareToken();
+  await instanceWithRefresh.post(
+    '/comment',
+    {
+      replying_to,
+      comment: text
+    },
+    config
+  );
 }
