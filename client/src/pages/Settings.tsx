@@ -16,8 +16,7 @@ function Settings() {
   const [changed, setChanged] = useState(false);
   const [src, setSRC] = useState<any>('');
   const { setValue } = useContext(SidebarContext);
-  const { token } = useAuth();
-  const { result } = useUserStore();
+  const { user, token } = useUserStore();
   const { isSuccess, data } = useQuery({
     queryFn: getProfileData,
     queryKey: ['Profile']
@@ -58,11 +57,11 @@ function Settings() {
   }, []);
 
   useEffect(() => {
-    setSRC(result?.pfp!);
-    if (isSuccess && data && result) {
+    setSRC(user?.pfp!);
+    if (isSuccess && user) {
       form.setValues(() => ({
-        username: result.username,
-        displayname: result.displayname,
+        username: user.username,
+        displayname: user.displayname,
         bio: data.bio
       }));
     }
@@ -92,9 +91,9 @@ function Settings() {
       credentials: 'include'
     });
     const data: any = await res.json();
-    if (result)
+    if (user)
       saveToStore({
-        ...result,
+        ...user,
         pfp: `http://localhost:5000/images/${data.name}`
       });
   };
@@ -148,7 +147,7 @@ function Settings() {
             <label htmlFor='img'>
               <img
                 crossOrigin='anonymous'
-                src={src || result?.pfp || 'defaultpfp.png'}
+                src={src || user?.pfp || 'defaultpfp.png'}
                 alt='settings profile picture'
                 className='h-28 w-28 rounded hover:cursor-pointer'
               />

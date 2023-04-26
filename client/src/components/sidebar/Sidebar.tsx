@@ -33,7 +33,7 @@ function Sidebar() {
   const logoutMutation = useMutation({
     mutationFn: logoutUser
   });
-  const { result } = useUserStore();
+  const { user } = useUserStore();
 
   const handleLogout = async () => {
     await logoutMutation.mutateAsync();
@@ -80,17 +80,15 @@ function Sidebar() {
             >
               <img
                 crossOrigin='anonymous'
-                src={`${result?.pfp || 'defaultpfp.png'}`}
+                src={`${user?.pfp || 'defaultpfp.png'}`}
                 alt='profile picture'
                 className='w-10 h-10 object-fit rounded-full bg-white'
               />
               <div className='hidden lg:flex flex-col basis-[60%] justify-center'>
                 <p className='text-md font-medium w-10/12 truncate'>
-                  {result?.displayname}
+                  {user?.displayname}
                 </p>
-                <span className='text-sm text-gray-500'>
-                  @{result?.username}
-                </span>
+                <span className='text-sm text-gray-500'>@{user?.username}</span>
               </div>
               <button
                 className='hidden lg:block'
@@ -176,7 +174,7 @@ function TweetModal({
           : 'text length should be 1-280'
     }
   });
-  const { result: user } = useUserStore();
+  const { user } = useUserStore();
 
   const addTweet = useMutation({
     mutationFn: createTweet,

@@ -12,7 +12,7 @@ import { getProfileData } from '@/api/authAPI';
 
 function Profile() {
   const { setValue } = useContext(SidebarContext);
-  const { result } = useUserStore();
+  const { user } = useUserStore();
   const { data: profile } = useQuery({
     queryFn: getProfileData,
     queryKey: ['Profile']
@@ -20,9 +20,9 @@ function Profile() {
 
   const { data: tweets } = useQuery({
     queryFn: getUserTweets,
-    queryKey: ['Tweet'],
+    queryKey: ['User'],
     onSuccess: (data) => {
-      data.map((tweet) => queryClient.setQueryData(['Tweet', tweet.id], tweet));
+      data.map((tweet) => queryClient.setQueryData(['User', tweet.id], tweet));
     }
   });
 
@@ -45,7 +45,7 @@ function Profile() {
               <AiOutlineArrowLeft className='text-2xl' />
             </Link>
             <div>
-              <p className='text-xl font-Bold'>{result?.username}</p>
+              <p className='text-xl font-Bold'>{user?.username}</p>
               <p className='text-sm text-textgray'>{tweets?.length} tweets</p>
             </div>
           </div>
@@ -55,7 +55,7 @@ function Profile() {
           <div className='flex justify-between'>
             <img
               crossOrigin='anonymous'
-              src={result?.pfp || 'defaultpfp.png'}
+              src={user?.pfp || 'defaultpfp.png'}
               className='-mt-10 ml-5 h-32 w-32 rounded-full border-4 border-black'
             />
             <Link to='/settings' className='mt-2 mr-1'>
@@ -63,8 +63,8 @@ function Profile() {
             </Link>
           </div>
           <div className='flex flex-col ml-5 py-5'>
-            <span className='text-2xl font-bold'>{result?.displayname}</span>
-            <span className='text-sm text-textgray'>@{result?.username}</span>
+            <span className='text-2xl font-bold'>{user?.displayname}</span>
+            <span className='text-sm text-textgray'>@{user?.username}</span>
             <span className='mt-4 text-sm font-light'>{profile?.bio}</span>
             <div className='flex gap-2 items-center text-sm mt-3'>
               <RxCalendar className='m-0' />
@@ -75,7 +75,7 @@ function Profile() {
           </div>
         </div>
         {tweets?.map((tweet) => (
-          <TweetCard key={tweet.id} tweet={tweet} />
+          <TweetCard showRetweets key={tweet.id} tweet={tweet} />
         ))}
       </div>
     </div>

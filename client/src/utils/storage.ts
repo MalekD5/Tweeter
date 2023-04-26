@@ -1,3 +1,4 @@
+import { useAuth } from '@/hooks/AuthHook';
 import { z } from 'zod';
 
 const userStoreSchema = z.object({
@@ -36,16 +37,18 @@ export function handleLocalStorage(
 }
 
 export function useUserStore() {
+  const { token } = useAuth();
   const userStore = localStorage.getItem('userStore');
   if (userStore === null)
     return { success: false, error: 'user store does not exists' };
 
   try {
     const parsedStore = JSON.parse(userStore);
-    const result = userStoreSchema.parse(parsedStore);
+    const user = userStoreSchema.parse(parsedStore);
     return {
       success: true,
-      result
+      user,
+      token
     };
   } catch (error) {
     return {
