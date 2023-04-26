@@ -6,7 +6,8 @@ import {
   Bookmarks,
   Profile,
   Login,
-  Register
+  Register,
+  TweetPage
 } from '@/pages';
 import { Layout, Authenticated, SignedOut } from '@/components';
 
@@ -24,8 +25,10 @@ function App() {
           <Route path='/settings' element={<Settings />} />
           <Route path='/bookmarks' element={<Bookmarks />} />
           <Route path='/profile' element={<Profile />} />
+          <Route path='/tweet/:id' element={<TweetPage />} />
         </Route>
       </Route>
+      <Route path='/*' element={<div>Not found</div>} />
     </Routes>
   );
 }

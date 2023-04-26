@@ -4,3 +4,4 @@ export { default as Layout } from './layout/Layout';
 export { default as TweetCard } from './tweets/TweetCard';
 export { default as Authenticated } from './Authenticated';
 export { default as SignedOut } from './SignedOut';
+export { default as TweetView } from './tweets/TweetView';

@@ -41,7 +41,12 @@ function CommentModal({ open, setOpen, replying_to }: CommentModalProps) {
     <Modal
       opened={open}
       onClose={() => setOpen(false)}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
       size='lg'
+      closeOnEscape
       closeOnClickOutside
     >
       <div className='flex w-full py-8 px-4'>

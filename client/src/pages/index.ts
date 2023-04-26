@@ -5,3 +5,4 @@ export { default as Bookmarks } from './Bookmarks';
 export { default as Profile } from './Profile';
 export { default as Login } from './flow/Login';
 export { default as Register } from './flow/Register';
+export { default as TweetPage } from './tweet/Tweet';
