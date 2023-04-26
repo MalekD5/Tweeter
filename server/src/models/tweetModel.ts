@@ -1,13 +1,13 @@
 import crypto from 'crypto';
 
 import {
+  commentsTable,
   likesTable,
   pool,
   retweetsTable,
   tweetsTable,
   userTable
 } from '../mysql';
-import { transformTweets } from '@/utils/ModelUtils';
 
 import type { ResultSetHeader, RowDataPacket } from 'mysql2';
 
@@ -22,16 +22,21 @@ export interface Tweet extends RowDataPacket {
   retweets: number;
   username?: string;
   displayname?: string;
+  type: 'TEXT' | 'COMMENT';
 }
 
-const INSERT_TWEET = `INSERT INTO ${tweetsTable}(id, content, author) VALUES(?,?,?)`;
-const SELECT_TOP_10_TWEETS = `SELECT twts.*, user.pfp, user.username, user.displayname FROM ${tweetsTable} as twts, ${userTable} as user WHERE author=user.id ORDER BY created_at DESC LIMIT 10;`;
+const INSERT_TWEET = `INSERT INTO ${tweetsTable}(id, content, author, type) VALUES(?,?,?,?)`;
+const SELECT_TOP_10_TWEETS = `SELECT t.*, u.pfp, u.username, u.displayname FROM ${tweetsTable} as t, ${userTable} as u WHERE t.author=u.id ORDER BY t.created_at DESC LIMIT 10;`;
 const VERIFY_OWNERSHIP = `SELECT author FROM ${tweetsTable} WHERE id=?`;
 
-export async function createTweet(author: number, text: string) {
-  const tweet_id = crypto.randomUUID().replace(/-/g, '');
+function generateId() {
+  return crypto.randomUUID().replace(/-/g, '');
+}
 
-  await pool.execute(INSERT_TWEET, [tweet_id, text, author]);
+export async function createTweet(author: number, text: string) {
+  const tweet_id = generateId();
+
+  await pool.execute(INSERT_TWEET, [tweet_id, text, author, 'TEXT']);
 
   return tweet_id;
 }
@@ -51,9 +56,10 @@ export async function isOwnerOfTweet(tweet_id: string, user_id: number) {
 
 export async function getUserTweets(user_id: number) {
   const [tweets] = await pool.query<Tweet[]>(
-    `SELECT twts.*, user.pfp, user.username, user.displayname FROM ${tweetsTable} as twts, ${userTable} as user WHERE author=user.id AND author=?`,
-    [user_id]
+    `SELECT r.*, u.username, u.displayname, u.pfp from (SELECT t.* FROM ${tweetsTable} AS t WHERE author=? UNION SELECT t.* FROM ${tweetsTable} AS t WHERE t.id IN(SELECT tweet_id FROM ${retweetsTable} WHERE user_id=?)) AS r, ${userTable} AS u WHERE r.author=u.id ORDER BY r.created_at desc`,
+    [user_id, user_id]
   );
+
   if (tweets.length === 0) return [];
   return tweets;
 }
@@ -95,7 +101,6 @@ export async function addRetweet(user_id: number, tweet_id: string) {
   try {
     con = await pool.getConnection();
     await con.beginTransaction();
-
     await con.execute(`INSERT INTO ${retweetsTable} VALUES(?,?)`, [
       user_id,
       tweet_id
@@ -182,4 +187,82 @@ export async function getLikes(user_id: number) {
   );
   if (result.length === 0) return [];
   return result.map((x) => x.tweet_id);
+}
+
+type Retweet = Likes & {
+  created_at: string;
+};
+
+export async function getRetweets(user_id: number) {
+  const [result] = await pool.query<Retweet[]>(
+    `SELECT tweet_id from ${retweetsTable} WHERE user_id=?`,
+    [user_id]
+  );
+  if (result.length === 0) return [];
+  return result.map((x) => x.tweet_id);
+}
+
+export async function getComments(tweet_id: string) {
+  const [comments] = await pool.query<Tweet[]>(
+    `SELECT r.*, u.username, u.displayname, u.pfp FROM (SELECT t.* FROM ${tweetsTable} WHERE t.id IN (SELECT comment_id FROM ${commentsTable} WHERE replying_to=?)) AS r, ${userTable} as u WHERE r.author=u.id ORDER BY r.created_at DESC LIMIT 50`,
+    [tweet_id]
+  );
+  if (comments.length === 0) return [];
+  return comments;
+}
+
+export async function addComment(
+  tweet_id: string,
+  author: number,
+  text: string
+) {
+  const newId = generateId();
+  let con = null;
+  try {
+    con = await pool.getConnection();
+    await con.beginTransaction();
+    await con.execute(INSERT_TWEET, [newId, text, author, 'COMMENT']);
+
+    await con.execute(`INSERT INTO ${commentsTable} VALUES(?,?,?)`, [
+      tweet_id,
+      newId,
+      author
+    ]);
+
+    await con.execute(
+      `UPDATE ${tweetsTable} SET comments=comments+1 WHERE id=?`,
+      [tweet_id]
+    );
+
+    await con.commit();
+  } catch (err: any) {
+    await con?.rollback();
+    console.error(err);
+  } finally {
+    con?.release();
+  }
+}
+
+type Comments = (RowDataPacket & {
+  comment_id: string;
+  replying_to: string;
+})[];
+
+export async function removeComment(comment_id: string) {
+  let con = null;
+  try {
+    con = await pool.getConnection();
+    await con.beginTransaction();
+    await con.execute(`DELETE FROM ${tweetsTable} WHERE id=?`, [comment_id]);
+    await con.execute(`DELETE FROM ${commentsTable} WHERE comment_id=?`, [
+      comment_id
+    ]);
+
+    await con.commit();
+  } catch (err: any) {
+    await con?.rollback();
+    console.error(err);
+  } finally {
+    con?.release();
+  }
 }

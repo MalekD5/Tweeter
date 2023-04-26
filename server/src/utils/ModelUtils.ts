@@ -27,7 +27,8 @@ export function transformData(
   user_id: number,
   tweets: TweetsArray,
   bookmarks: string[] | boolean,
-  likes: string[]
+  likes: string[],
+  retweets?: string[]
 ) {
   return tweets.map(({ pfp, content, created_at, ...x }) => ({
     ...x,
@@ -40,6 +41,6 @@ export function transformData(
     isLiked: likes.includes(x.id),
     isBookmarked:
       typeof bookmarks === 'boolean' ? bookmarks : bookmarks.includes(x.id),
-    isRetweeted: false
+    isRetweeted: !!retweets ? retweets.includes(x.id) : false
   }));
 }

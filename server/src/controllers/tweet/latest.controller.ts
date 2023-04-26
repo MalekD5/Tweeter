@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { retrieveTopTweets, getLikes, Tweet } from '@/models/tweetModel';
+import { retrieveTopTweets, getLikes, getRetweets } from '@/models/tweetModel';
 import { getBookmarksId } from '@/models/bookmarkModel';
 import { transformData } from '@/utils/ModelUtils';
 
@@ -12,8 +12,9 @@ export default async function latestTweetsController(
     const tweets = await retrieveTopTweets();
     const bookmarks = await getBookmarksId(user_id);
     const likes = await getLikes(user_id);
+    const retweets = await getRetweets(user_id);
 
-    const data = transformData(user_id, tweets, bookmarks, likes);
+    const data = transformData(user_id, tweets, bookmarks, likes, retweets);
 
     res.status(200).json(data);
   } catch (err: any) {
