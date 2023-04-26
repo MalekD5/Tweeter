@@ -14,7 +14,13 @@ export default async function latestTweetsController(
     const likes = await getLikes(user_id);
     const retweets = await getRetweets(user_id);
 
-    const data = transformData(user_id, tweets, bookmarks, likes, retweets);
+    const data = transformData(
+      user_id,
+      tweets,
+      bookmarks,
+      likes,
+      retweets?.map((x) => x.tweet_id)
+    );
 
     res.status(200).json(data);
   } catch (err: any) {
