@@ -12,7 +12,7 @@ import validator from 'validator';
 import { LatestTweetsType } from '@common/types/Endpoints';
 
 function Explore() {
-  const { result } = useUserStore();
+  const { user } = useUserStore();
   const { setValue } = useContext(SidebarContext);
   const { data } = useQuery({
     queryFn: getExploreTweets,
@@ -44,7 +44,7 @@ function Explore() {
     onSuccess: (data) => {
       queryClient.setQueryData<LatestTweetsType[]>(['Tweet'], (old) => [
         {
-          ...result,
+          ...user,
           ...data
         },
         ...old!
@@ -82,7 +82,7 @@ function Explore() {
           <img
             crossOrigin='anonymous'
             className='cursor-pointer w-14 h-14 rounded-full bg-white'
-            src={`${result?.pfp ?? 'defaultpfp.png'}`}
+            src={`${user?.pfp ?? 'defaultpfp.png'}`}
             alt='tweet profile picture'
           />
           <form
