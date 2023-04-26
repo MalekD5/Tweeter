@@ -64,6 +64,7 @@ function TweetCardV3(props: TweetProps) {
 
   const onSuccess = () => {
     queryClient.invalidateQueries(['Tweet'], { exact: true });
+    queryClient.invalidateQueries(['Bookmark'], { exact: true });
   };
 
   const likeMutation = useMutation({
