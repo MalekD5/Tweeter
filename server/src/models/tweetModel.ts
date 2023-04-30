@@ -1,107 +1,140 @@
-import crypto from 'crypto';
-
-import {
-  commentsTable,
-  likesTable,
-  pool,
-  retweetsTable,
-  tweetsTable,
-  userTable
-} from '../mysql';
-
+import { pool } from '@/mysql';
+import type { Tweet } from '@common/types/Main';
 import type { ResultSetHeader, RowDataPacket } from 'mysql2';
-import { getBookmarksFromTweet } from './bookmarkModel';
-import { transformData } from '@/utils/ModelUtils';
+import { generateId, transformTweets } from '@/utils/ModelUtils';
 
-export interface Tweet extends RowDataPacket {
-  id: string;
+type Comment = {
+  replying_to: string;
+  comment_id: string;
   author: number;
-  content: string;
-  created_at: string;
-  pfp: string;
-  likes: number;
-  comments: number;
-  retweets: number;
-  username?: string;
-  displayname?: string;
-  type: 'TEXT' | 'COMMENT';
-}
+};
 
-const INSERT_TWEET = `INSERT INTO ${tweetsTable}(id, content, author, type) VALUES(?,?,?,?)`;
-const SELECT_TOP_10_TWEETS = `SELECT t.*, u.pfp, u.username, u.displayname FROM ${tweetsTable} as t, ${userTable} as u WHERE t.author=u.id AND type='TEXT' ORDER BY t.created_at DESC LIMIT 10;`;
-const VERIFY_OWNERSHIP = `SELECT author FROM ${tweetsTable} WHERE id=?`;
-
-function generateId() {
-  return crypto.randomUUID().replace(/-/g, '');
-}
+type DatabaseTweet = (RowDataPacket & Omit<Tweet, 'isAuthor'>)[];
+type DatabaseComment = (RowDataPacket & Comment)[];
 
 export async function createTweet(author: number, text: string) {
   const tweet_id = generateId();
 
-  await pool.execute(INSERT_TWEET, [tweet_id, text, author, 'TEXT']);
+  await pool.execute(
+    `INSERT INTO tweets(id, content, author, type) VALUES(?,?,?,?)`,
+    [tweet_id, text, author, 'TEXT']
+  );
 
   return tweet_id;
 }
 
-export async function getTweet(tweet_id: string, user_id: number) {
-  const [tweets] = await pool.query<Tweet[]>(
-    `SELECT t.*, u.username, u.displayname, u.pfp FROM ${tweetsTable} AS t, ${userTable} AS u WHERE t.id=? AND t.author=u.id;`,
-    [tweet_id]
+export async function getTweet(tweetId: string, userId: number) {
+  const [tweets] = await pool.query<DatabaseTweet>(
+    `
+  SELECT 
+    t.id,
+    t.author,
+    t.content,
+    t.created_at,
+    t.likes,
+    t.retweets,
+    t.comments,
+    u.username,
+    u.displayname,
+    u.pfp,
+    IF(b.tweet_id IS NULL, 0, 1) 'isBookmarked',
+    IF(r.tweet_id IS NULL, 0, 1) 'isRetweeted',
+    IF(l.tweet_id IS NULL, 0, 1) 'isLiked'
+FROM
+    tweets t
+        LEFT JOIN
+    likes l ON t.id = l.tweet_id AND l.user_id=?
+        LEFT JOIN
+    retweets r ON t.id = r.tweet_id AND r.user_id=?
+        LEFT JOIN
+    bookmarks b ON t.id = b.tweet_id AND b.user_id=?
+	INNER JOIN
+    users u ON u.id = t.author
+WHERE t.id=? ORDER BY t.created_at DESC;`,
+    [userId, userId, userId, tweetId]
   );
   if (tweets.length === 0) return {};
   const tweet = tweets[0];
-  const comments = await getComments(tweet_id);
-  const [likes] = await pool.query<Likes[]>(
-    `
-  SELECT DISTINCT tweet_id FROM ${likesTable}
-  WHERE user_id=? AND (tweet_id=? OR tweet_id IN (
-  SELECT comment_id FROM ${commentsTable} WHERE replying_to=?
-  )) 
-  `,
-    [user_id, tweet_id, tweet_id]
-  );
 
-  const bookmarks = await getBookmarksFromTweet(tweet_id, user_id);
-  const [retweets] = await pool.query<Retweet[]>(
-    `
-  SELECT DISTINCT tweet_id FROM ${retweetsTable}
-  WHERE user_id=? AND (tweet_id=? OR tweet_id IN (
-  SELECT comment_id FROM ${commentsTable} WHERE replying_to=?
-  )) 
-  `,
-    [user_id, tweet_id, tweet_id]
-  );
-
-  const tLikes = likes?.map((x) => x.tweet_id);
-  const tRetweets = retweets?.map((x) => x.tweet_id);
-
-  return {
-    tweet: transformData(user_id, [tweet], bookmarks, tLikes, tRetweets),
-    comments: transformData(user_id, comments, bookmarks, tLikes, tRetweets)
-  };
+  return transformTweets([tweet as Tweet], userId)[0];
 }
 
-export async function retrieveTopTweets() {
-  const [tweets] = await pool.query<Tweet[]>(SELECT_TOP_10_TWEETS);
-  return tweets;
+export async function retrieveTopTweets(userId: number, offset: number = 0) {
+  const [tweets] = await pool.query<DatabaseTweet>(
+    `
+SELECT
+    t.id,
+    t.author,
+    t.content,
+    t.created_at,
+    t.likes,
+    t.retweets,
+    t.comments,
+    u.username,
+    u.displayname,
+    u.pfp,
+    IF(b.tweet_id IS NULL, 0, 1) 'isBookmarked',
+    IF(r.tweet_id IS NULL, 0, 1) 'isRetweeted',
+    IF(l.tweet_id IS NULL, 0, 1) 'isLiked'
+FROM
+    tweets t
+        LEFT JOIN
+    likes l ON t.id = l.tweet_id AND l.user_id=?
+        LEFT JOIN
+    retweets r ON t.id = r.tweet_id AND r.user_id=?
+        LEFT JOIN
+    bookmarks b ON t.id = b.tweet_id AND b.user_id=?
+	INNER JOIN
+    users u ON u.id = t.author
+ WHERE type='TEXT' ORDER BY t.created_at DESC LIMIT 10 OFFSET ${offset};`,
+    [userId, userId, userId]
+  );
+  return transformTweets(tweets as Tweet[], userId);
 }
 
 export async function isOwnerOfTweet(tweet_id: string, user_id: number) {
-  const [tweets] = await pool.query<Tweet[]>(VERIFY_OWNERSHIP, [tweet_id]);
+  const [tweets] = await pool.query<DatabaseTweet>(
+    `SELECT author FROM tweets WHERE id=?`,
+    [tweet_id]
+  );
   if (tweets.length === 0) return false;
 
   const tweet = tweets[0];
   return tweet.author === user_id;
 }
 
-export async function getUserTweets(user_id: number) {
-  const [tweets] = await pool.query<Tweet[]>(
-    `SELECT r.*, u.username, u.displayname, u.pfp from (SELECT t.* FROM ${tweetsTable} AS t WHERE author=? UNION SELECT t.* FROM ${tweetsTable} AS t WHERE t.id IN(SELECT tweet_id FROM ${retweetsTable} WHERE user_id=?)) AS r, ${userTable} AS u WHERE r.author=u.id ORDER BY r.created_at desc`,
-    [user_id, user_id]
+export async function getUserTweets(userId: number) {
+  const [tweets] = await pool.query<DatabaseTweet>(
+    `SELECT 
+    t.id,
+    t.author,
+    t.content,
+    t.created_at,
+    t.likes,
+    t.retweets,
+    t.comments,
+    u.username,
+    u.displayname,
+    u.pfp,
+    IF(b.tweet_id IS NULL, 0, 1) 'isBookmarked',
+    IF(r.tweet_id IS NULL, 0, 1) 'isRetweeted',
+    IF(l.tweet_id IS NULL, 0, 1) 'isLiked'
+FROM
+    tweets t
+        LEFT JOIN
+    likes l ON t.id = l.tweet_id AND l.user_id=?
+        LEFT JOIN
+    retweets r ON t.id = r.tweet_id AND r.user_id=?
+        LEFT JOIN
+    bookmarks b ON t.id = b.tweet_id AND b.user_id=?
+	INNER JOIN
+    users u ON u.id = t.author
+WHERE (t.author=? OR t.id=r.tweet_id) AND t.type='TEXT' ORDER BY t.created_at DESC;`,
+    [userId, userId, userId, userId]
   );
 
   if (tweets.length === 0) return [];
-  return tweets;
+  return transformTweets(tweets as Tweet[], userId);
 }
 
 export async function deleteTweet(user_id: number, tweet_id: string) {
@@ -109,7 +142,41 @@ export async function deleteTweet(user_id: number, tweet_id: string) {
   if (!isOwner) {
     return false;
   }
-  await pool.execute(`DELETE FROM ${tweetsTable} WHERE id=?`, [tweet_id]);
+
+  let con = null;
+  try {
+    con = await pool.getConnection();
+    await con.beginTransaction();
+
+    const [tweets] = await con.query<DatabaseTweet>(
+      `
+    SELECT type from tweets WHERE id=?
+    `,
+      [tweet_id]
+    );
+    if (tweets.length === 0) return false;
+    const [tweet] = tweets;
+    if (tweet.type === 'COMMENT') {
+      const [[parentTweet]] = await con.query<DatabaseComment>(
+        `SELECT replying_to FROM comments WHERE comment_id=?`,
+        [tweet_id]
+      );
+
+      await con.execute('UPDATE tweets SET comments=comments-1 WHERE id=?', [
+        parentTweet.replying_to
+      ]);
+
+      await con.execute(`DELETE FROM comments WHERE comment_id=?`, [tweet_id]);
+    }
+    await con.execute(`DELETE FROM tweets WHERE id=?`, [tweet_id]);
+    await con.commit();
+  } catch (err: any) {
+    console.log(err);
+    await con?.rollback();
+  } finally {
+    con?.release();
+  }
+
   return true;
 }
 
@@ -119,14 +186,9 @@ export async function addLike(user_id: number, tweet_id: string) {
     con = await pool.getConnection();
     await con.beginTransaction();
 
-    await con.execute(`INSERT INTO ${likesTable} VALUES(?,?)`, [
-      user_id,
-      tweet_id
-    ]);
+    await con.execute(`INSERT INTO likes VALUES(?,?)`, [user_id, tweet_id]);
 
-    await con.execute(`UPDATE ${tweetsTable} SET likes=likes+1 WHERE id=?`, [
-      tweet_id
-    ]);
+    await con.execute(`UPDATE tweets SET likes=likes+1 WHERE id=?`, [tweet_id]);
     await con.commit();
   } catch (err: any) {
     await con?.rollback();
@@ -141,15 +203,14 @@ export async function addRetweet(user_id: number, tweet_id: string) {
   try {
     con = await pool.getConnection();
     await con.beginTransaction();
-    await con.execute(
-      `INSERT INTO ${retweetsTable}(user_id, tweet_id) VALUES(?,?)`,
-      [user_id, tweet_id]
-    );
+    await con.execute(`INSERT INTO retweets(user_id, tweet_id) VALUES(?,?)`, [
+      user_id,
+      tweet_id
+    ]);
 
-    await con.execute(
-      `UPDATE ${tweetsTable} SET retweets=retweets+1 WHERE id=?`,
-      [tweet_id]
-    );
+    await con.execute(`UPDATE tweets SET retweets=retweets+1 WHERE id=?`, [
+      tweet_id
+    ]);
     await con.commit();
   } catch (err: any) {
     await con?.rollback();
@@ -166,7 +227,7 @@ export async function removeLike(user_id: number, tweet_id: string) {
     await con.beginTransaction();
 
     const [res] = await con.query<ResultSetHeader>(
-      `DELETE FROM ${likesTable} WHERE user_id=? AND tweet_id=?`,
+      `DELETE FROM likes WHERE user_id=? AND tweet_id=?`,
       [user_id, tweet_id]
     );
 
@@ -175,9 +236,7 @@ export async function removeLike(user_id: number, tweet_id: string) {
       return;
     }
 
-    await con.execute(`UPDATE ${tweetsTable} SET likes=likes-1 WHERE id=?`, [
-      tweet_id
-    ]);
+    await con.execute(`UPDATE tweets SET likes=likes-1 WHERE id=?`, [tweet_id]);
     await con.commit();
   } catch (err: any) {
     await con?.rollback();
@@ -194,7 +253,7 @@ export async function removeRetweet(user_id: number, tweet_id: string) {
     await con.beginTransaction();
 
     const [res] = await con.query<ResultSetHeader>(
-      `DELETE FROM ${retweetsTable} WHERE user_id=? AND tweet_id=?`,
+      `DELETE FROM retweets WHERE user_id=? AND tweet_id=?`,
       [user_id, tweet_id]
     );
 
@@ -203,10 +262,9 @@ export async function removeRetweet(user_id: number, tweet_id: string) {
       return;
     }
 
-    await con.execute(
-      `UPDATE ${tweetsTable} SET retweets=retweets-1 WHERE id=?`,
-      [tweet_id]
-    );
+    await con.execute(`UPDATE tweets SET retweets=retweets-1 WHERE id=?`, [
+      tweet_id
+    ]);
     await con.commit();
   } catch (err: any) {
     await con?.rollback();
@@ -222,7 +280,7 @@ type Likes = RowDataPacket & {
 
 export async function getLikes(user_id: number) {
   const [result] = await pool.query<Likes[]>(
-    `SELECT tweet_id FROM ${likesTable} WHERE user_id=?`,
+    `SELECT tweet_id FROM likes WHERE user_id=?`,
     [user_id]
   );
   if (result.length === 0) return [];
@@ -235,20 +293,49 @@ export type Retweet = Likes & {
 
 export async function getRetweets(user_id: number) {
   const [result] = await pool.query<Retweet[]>(
-    `SELECT tweet_id,created_at from ${retweetsTable} WHERE user_id=?`,
+    `SELECT tweet_id,created_at from retweets WHERE user_id=?`,
     [user_id]
   );
   if (result.length === 0) return [];
   return result;
 }
 
-export async function getComments(tweet_id: string) {
-  const [comments] = await pool.query<Tweet[]>(
-    `SELECT r.*, u.username, u.displayname, u.pfp FROM (SELECT t.* FROM ${tweetsTable} AS t WHERE t.id IN (SELECT comment_id FROM ${commentsTable} WHERE replying_to=?)) AS r, ${userTable} as u WHERE r.author=u.id ORDER BY r.created_at DESC LIMIT 50`,
-    [tweet_id]
+export async function getCommentsV2(tweetId: string, userId: number) {
+  const [comments] = await pool.query<DatabaseTweet>(
+    `SELECT 
+    t.id,
+    t.author,
+    t.content,
+    t.created_at,
+    t.likes,
+    t.retweets,
+    t.comments,
+    u.username,
+    u.displayname,
+    u.pfp,
+    IF(b.tweet_id IS NULL, 0, 1) 'isBookmarked',
+    IF(r.tweet_id IS NULL, 0, 1) 'isRetweeted',
+    IF(l.tweet_id IS NULL, 0, 1) 'isLiked'
+FROM
+    tweets t
+        LEFT JOIN
+    likes l ON t.id = l.tweet_id
+        LEFT JOIN
+    retweets r ON t.id = r.tweet_id
+        LEFT JOIN
+    bookmarks b ON t.id = b.tweet_id 
+        INNER JOIN
+    comments c ON (c.comment_id = t.id
+        OR c.comment_id = r.tweet_id)
+        AND c.replying_to = ?
+	INNER JOIN
+    users u ON u.id = t.author
+ORDER BY t.created_at DESC;`,
+    [tweetId]
   );
   if (comments.length === 0) return [];
-  return comments;
+
+  return transformTweets(comments as Tweet[], userId);
 }
 
 export async function addComment(
@@ -261,58 +348,19 @@ export async function addComment(
   try {
     con = await pool.getConnection();
     await con.beginTransaction();
-    await con.execute(INSERT_TWEET, [newId, text, author, 'COMMENT']);
+    await con.execute(
+      `INSERT INTO tweets(id, content, author, type) VALUES(?,?,?,?)`,
+      [newId, text, author, 'COMMENT']
+    );
 
-    await con.execute(`INSERT INTO ${commentsTable} VALUES(?,?,?)`, [
+    await con.execute(`INSERT INTO comments VALUES(?,?,?)`, [
       tweet_id,
       newId,
       author
     ]);
 
-    await con.execute(
-      `UPDATE ${tweetsTable} SET comments=comments+1 WHERE id=?`,
-      [tweet_id]
-    );
-
-    await con.commit();
-  } catch (err: any) {
-    await con?.rollback();
-    console.error(err);
-  } finally {
-    con?.release();
-  }
-}
-
-type Comments = (RowDataPacket & {
-  comment_id: string;
-  replying_to: string;
-})[];
-
-export async function removeComment(comment_id: string, author: number) {
-  let con = null;
-  try {
-    con = await pool.getConnection();
-    await con.beginTransaction();
-    const [tweets] = await con.query<Tweet[]>(
-      `SELECT author FROM ${tweetsTable} WHERE id=? AND type='COMMENT'`,
-      comment_id
-    );
-
-    if (tweets.length === 0) {
-      return {
-        error: 'comment does not exists'
-      };
-    }
-
-    const tweet = tweets[0];
-    if (tweet.author !== author) {
-      return {
-        error: 'not author'
-      };
-    }
-    await con.execute(`DELETE FROM ${tweetsTable} WHERE id=?`, [comment_id]);
-    await con.execute(`DELETE FROM ${commentsTable} WHERE comment_id=?`, [
-      comment_id
+    await con.execute(`UPDATE tweets SET comments=comments+1 WHERE id=?`, [
+      tweet_id
     ]);
 
     await con.commit();
