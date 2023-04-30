@@ -1,5 +1,5 @@
 import express from 'express';
-import { CommentController, UnCommentController } from '@/controllers/tweet';
+import { CommentController } from '@/controllers/tweet';
 import { ValidationChain, body, param, query } from 'express-validator';
 import { validationMiddleware } from '@/middleware/validationMiddleware';
 import GetCommentsController from '@/controllers/tweet/comment/getComments.controller';
@@ -20,10 +20,6 @@ router
       validationMiddleware
     ],
     CommentController
-  )
-  .delete(
-    [validate(query('comment_id')), validationMiddleware],
-    UnCommentController
   );
 
 router.get(
