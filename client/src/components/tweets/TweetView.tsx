@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import { ElementType } from '../Dropdown';
-import type { LatestTweetsType } from '@common/types/Endpoints';
 import TweetOptions from './TweetOptions';
 import TweetButtons from './TweetButtons';
+import type { Tweet } from '@common/types/Main';
 
 type TweetViewProps = {
-  tweet: LatestTweetsType;
+  tweet: Tweet;
 };
 
 function TweetView({ tweet }: TweetViewProps) {
@@ -53,7 +53,7 @@ function TweetView({ tweet }: TweetViewProps) {
             </div>
           </div>
           <p className='mt-0.5 w-11/12 break-words text-md font-normal'>
-            {tweet.text}
+            {tweet.content}
           </p>
           <p className='text-textgray text-sm'>7:38 AM · Apr 26, 2023</p>
         </div>
