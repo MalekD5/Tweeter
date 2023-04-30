@@ -1,63 +1,48 @@
-import {
-  pool,
-  bookmarkTable,
-  tweetsTable,
-  userTable,
-  commentsTable
-} from '@/mysql';
-import { transformTweets } from '@/utils/ModelUtils';
+import { pool, bookmarkTable } from '@/mysql';
 
 import type { RowDataPacket } from 'mysql2';
-import type { Tweet } from './tweetModel';
+import { DatabaseTweet } from './model';
+import { transformTweets } from '@/utils/ModelUtils';
+import type { Tweet } from '@common/types/Main';
 
 export interface BookmarkRowData extends RowDataPacket {
   user_id: string;
   tweet: string;
 }
 
-export async function getBookmarksFromTweet(tweet_id: string, user_id: number) {
-  const [bookmarks] = await pool.query<BookmarkRowData[]>(
-    `
-   SELECT DISTINCT tweet 'id' FROM ${bookmarkTable}
-  WHERE user_id=? AND (tweet=? OR tweet IN (
-  SELECT comment_id FROM ${commentsTable} WHERE replying_to=?
-  )) `,
-    [user_id, tweet_id, tweet_id]
-  );
-
-  if (bookmarks.length === 0) return [];
-  return bookmarks.map((x) => x.tweet);
-}
-
 export async function getBookmarks(user_id: number, offset = 0) {
-  const [bookmarks] = await pool.query<BookmarkRowData[]>(
-    `SELECT * from ${bookmarkTable} WHERE user_id=? LIMIT 10 OFFSET ${offset}`,
-    [user_id]
-  );
-  if (bookmarks.length === 0) return [];
-
-  const selectedTweets = selectTweets(bookmarks, offset);
-
-  if (selectedTweets.length === 0) return [];
-
-  const tweet_ids = selectedTweets.join(',');
-
-  const [tweets] = await pool.query<Tweet[]>(
-    `SELECT twts.*, user.pfp, user.username, user.displayname from ${userTable} as user, ${tweetsTable} as twts WHERE author=user.id AND twts.id in (${tweet_ids}) ORDER BY created_at DESC LIMIT 10`
+  const [tweets] = await pool.query<DatabaseTweet>(
+    `
+SELECT
+    t.id,
+    t.author,
+    t.content,
+    t.created_at,
+    t.likes,
+    t.retweets,
+    t.comments,
+    u.username,
+    u.displayname,
+    u.pfp,
+    1 'isBookmarked',
+    IF(r.tweet_id IS NULL, 0, 1) 'isRetweeted',
+    IF(l.tweet_id IS NULL, 0, 1) 'isLiked'
+FROM
+    tweets t
+        LEFT JOIN
+    likes l ON t.id = l.tweet_id AND l.user_id=?
+        LEFT JOIN
+    retweets r ON t.id = r.tweet_id AND r.user_id=?
+        LEFT JOIN
+    bookmarks b ON t.id = b.tweet_id AND b.user_id=?
+	INNER JOIN
+    users u ON u.id = t.author
+WHERE t.id=b.tweet_id ORDER BY t.created_at DESC LIMIT 10 OFFSET ${offset};`,
+    [user_id, user_id, user_id]
   );
   if (tweets.length === 0) return [];
 
-  return tweets;
-}
-
-export async function getBookmarksId(user_id: number) {
-  const [bookmarks] = await pool.query<BookmarkRowData[]>(
-    `SELECT tweet from ${bookmarkTable} WHERE user_id=? LIMIT 20`,
-    [user_id]
-  );
-  if (bookmarks.length === 0) return [];
-  const data = bookmarks.map((x) => x.tweet);
-  return data;
+  return transformTweets(tweets as Tweet[], user_id);
 }
 
 export async function bookmark(user_id: number, tweetId: string) {
@@ -72,12 +57,4 @@ export async function unbookmark(user_id: number, tweetId: string) {
     `DELETE FROM ${bookmarkTable} WHERE user_id=? AND tweet=? `,
     [user_id, tweetId]
   );
-}
-
-function selectTweets(bookmarks: BookmarkRowData[], offset: number) {
-  const selectedTweets = [];
-  for (let i = offset; i < bookmarks.length; i++) {
-    selectedTweets.push(`'${bookmarks[i].tweet}'`);
-  }
-  return selectedTweets;
 }
