@@ -1,12 +1,9 @@
-import { LatestTweetsType } from '@common/types/Endpoints';
 import { instanceWithRefresh, prepareToken } from './api';
+import type { Tweet } from '@common/types/Main';
 
 export async function getBookmarks() {
   const config = prepareToken();
-  const res = await instanceWithRefresh.get<LatestTweetsType[]>(
-    '/bookmarks',
-    config
-  );
+  const res = await instanceWithRefresh.get<Tweet[]>('/bookmarks', config);
   return res?.data;
 }
 
