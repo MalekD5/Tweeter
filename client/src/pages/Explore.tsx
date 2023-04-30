@@ -41,15 +41,8 @@ function Explore() {
 
   const addTweet = useMutation({
     mutationFn: createTweet,
-    onSuccess: (data) => {
-      queryClient.setQueryData<LatestTweetsType[]>(['Tweet'], (old) => [
-        {
-          ...user,
-          ...data
-        },
-        ...old!
-      ]);
-      queryClient.setQueryData(['Tweet', data.id], data);
+    onSuccess: () => {
+      queryClient.invalidateQueries(['Tweet'], { exact: true });
     }
   });
 
