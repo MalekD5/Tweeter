@@ -118,7 +118,11 @@ function TweetOptionButton({ onClick, children }: TweetOptionButtonProps) {
   return (
     <button
       className='text-md mt-2 hover:bg-search py-0.5 px-4 w-full'
-      onClick={onClick}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onClick();
+      }}
     >
       <div className='flex gap-3 items-center text-base'>{children}</div>
     </button>
