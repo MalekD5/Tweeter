@@ -3,7 +3,6 @@ import path from 'path';
 
 import { type RowDataPacket } from 'mysql2';
 import { pool, userTable } from '@/mysql';
-import { exists } from '@/utils/ModelUtils';
 
 export type UserData = {
   id: number;
@@ -14,7 +13,7 @@ export type UserData = {
   bio?: string;
 };
 
-interface UserRowResponse extends RowDataPacket, UserData { }
+interface UserRowResponse extends RowDataPacket, UserData {}
 
 export async function find(id: number) {
   const [response] = await pool.query<UserRowResponse[]>(
@@ -32,10 +31,10 @@ export async function updateProfilePicture(id: number, pfp_url: string) {
     [id]
   );
 
-  if (!exists(users)) throw Error('user not found');
+  if (users.length === 0) throw Error('user not found');
 
   const [user] = users;
-  fs.unlink(path.resolve(`./images/${user.pfp}`), () => { });
+  fs.unlink(path.resolve(`./images/${user.pfp}`), () => {});
 
   return await pool.execute(`UPDATE ${userTable} SET pfp=? WHERE id=?`, [
     pfp_url,
