@@ -1,26 +1,33 @@
 import { queryClient } from '@/api/api';
-import { addComment, createTweet, getId } from '@/api/tweetAPI';
+import { addComment, getComments, getId } from '@/api/tweetAPI';
 import { TweetCard, TweetView } from '@/components';
 import { useUserStore } from '@/utils/storage';
 import { Textarea } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 import { useMutation, useQuery } from 'react-query';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import validator from 'validator';
 
 function Tweet() {
   const { id } = useParams();
   const { user } = useUserStore();
-  const navigate = useNavigate();
-  const location = useLocation();
+
+  const loc = useLocation();
+  const previous = loc.state?.from?.pathname;
 
   if (!id) {
     return <div>error</div>;
   }
-  const { data } = useQuery({
-    queryKey: ['Comment', id],
+
+  const { data: parentTweet } = useQuery({
+    queryKey: ['Tweet', id],
     queryFn: async () => await getId(id)
+  });
+
+  const { data: comments } = useQuery({
+    queryKey: ['Comments', id],
+    queryFn: async () => await getComments(id)
   });
 
   const form = useForm({
@@ -56,7 +63,10 @@ function Tweet() {
     <div className='w-1/2'>
       <div className='px-4 flex backdrop-blur-lg items-center w-full h-14 sticky top-0 '>
         <div className='flex gap-5 w-fit items-center'>
-          <Link to='/explore' className='hover:bg-bordergray p-2 rounded-full'>
+          <Link
+            to={previous || '/explore'}
+            className='hover:bg-bordergray p-2 rounded-full'
+          >
             <AiOutlineArrowLeft className='text-2xl' />
           </Link>
           <div>
@@ -64,9 +74,7 @@ function Tweet() {
           </div>
         </div>
       </div>
-      {data?.tweet?.map((tweet) => (
-        <TweetView key={tweet.id} tweet={tweet} />
-      ))}
+      {parentTweet && <TweetView key={parentTweet.id} tweet={parentTweet} />}
       <div className='flex items-center w-full py-8 px-4'>
         <img
           crossOrigin='anonymous'
@@ -103,7 +111,7 @@ function Tweet() {
           </div>
         </form>
       </div>
-      {data?.comments?.map((tweet) => (
+      {comments?.map((tweet) => (
         <TweetCard key={tweet.id} tweet={tweet} />
       ))}
     </div>
