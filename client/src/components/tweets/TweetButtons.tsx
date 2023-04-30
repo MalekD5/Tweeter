@@ -5,7 +5,6 @@ import {
   createRetweet,
   removeRetweet
 } from '@/api/tweetAPI';
-import type { LatestTweetsType } from '@common/types/Endpoints';
 import { useState } from 'react';
 import { useMutation } from 'react-query';
 import type { IconType } from 'react-icons';
@@ -18,6 +17,7 @@ import {
 } from 'react-icons/ai';
 import { useHover } from '@mantine/hooks';
 import CommentModal from './CommentModal';
+import type { Tweet } from '@common/types/Main';
 
 // Hover - icon - text
 const colors = {
@@ -29,7 +29,7 @@ const colors = {
 type colorsType = keyof typeof colors;
 
 type TweetButtonsProps = {
-  tweet: LatestTweetsType;
+  tweet: Tweet;
   showNumbers: boolean;
 };
 type TweetButtonProps = {
