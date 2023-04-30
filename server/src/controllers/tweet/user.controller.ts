@@ -1,6 +1,4 @@
-import { getBookmarksId } from '@/models/bookmarkModel';
-import { getLikes, getRetweets, getUserTweets } from '@/models/tweetModel';
-import { transformData, transformDataForUser } from '@/utils/ModelUtils';
+import { getUserTweets } from '@/models/tweetModel';
 import type { Request, Response } from 'express';
 
 export default async function UserTweetController(req: Request, res: Response) {
@@ -8,18 +6,8 @@ export default async function UserTweetController(req: Request, res: Response) {
 
   try {
     const tweets = await getUserTweets(user_id);
-    const likes = await getLikes(user_id);
-    const bookmarks = await getBookmarksId(user_id);
-    const retweets = await getRetweets(user_id);
 
-    const data = transformDataForUser(
-      user_id,
-      tweets,
-      bookmarks,
-      likes,
-      retweets
-    );
-    res.status(200).json(data);
+    res.status(200).json(tweets);
   } catch (err: any) {
     console.error(err);
     res.sendStatus(500);
