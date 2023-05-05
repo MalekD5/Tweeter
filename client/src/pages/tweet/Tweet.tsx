@@ -60,7 +60,7 @@ function Tweet() {
   };
 
   return (
-    <div className='w-1/2'>
+    <div className='w-full md:w-1/2'>
       <div className='px-4 flex backdrop-blur-lg items-center w-full h-14 sticky top-0 '>
         <div className='flex gap-5 w-fit items-center'>
           <Link

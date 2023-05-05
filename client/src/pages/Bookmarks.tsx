@@ -30,7 +30,7 @@ function Bookmarks() {
 
   return (
     <>
-      <div className='w-1/2 flex flex-col min-h-[100vh] border border-bordergray'>
+      <div className='w-full md:w-1/2 flex flex-col min-h-[100vh] border border-bordergray'>
         <div className='px-4 flex backdrop-blur-lg items-center w-full h-14 sticky top-0 '>
           <div className='flex gap-5 w-fit items-center'>
             <Link

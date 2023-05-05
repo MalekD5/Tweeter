@@ -1,4 +1,3 @@
-import type { IconType } from 'react-icons';
 import { Link } from 'react-router-dom';
 import { AiOutlineTwitter } from 'react-icons/ai';
 import { FaHashtag } from 'react-icons/fa';
@@ -11,19 +10,15 @@ import {
   MdPerson,
   MdMore
 } from 'react-icons/md';
-import { useContext, useState } from 'react';
-import { SidebarContext } from '@/context/SidebarContext';
 import { useAuth } from '@/hooks/AuthHook';
-import { Modal, Divider, Textarea } from '@mantine/core';
+import { Divider } from '@mantine/core';
 import { useUserStore } from '@/utils/storage';
 import Dropdown, { ElementType } from '../Dropdown';
-import { useForm } from '@mantine/form';
-import validator from 'validator';
 import { useMutation } from 'react-query';
 import { logoutUser } from '@/api/authAPI';
-import { createTweet } from '@/api/tweetAPI';
-import { queryClient } from '@/api/api';
-import { LatestTweetsType } from '@common/types/Endpoints';
+import { useState } from 'react';
+import SidebarItem from './SidebarItem';
+import TweetModal from './SidebarTweetModal';
 
 function Sidebar() {
   const [openModal, setModalOpen] = useState(false);
@@ -117,134 +112,6 @@ function Sidebar() {
         </div>
       </header>
     </>
-  );
-}
-
-type SidebarProps = {
-  Icon: IconType;
-  ActiveIcon?: IconType;
-  to: string;
-  text?: string;
-  first?: boolean;
-};
-
-function SidebarItem({ Icon, ActiveIcon, to, text, first }: SidebarProps) {
-  const { value } = useContext(SidebarContext);
-  const bold = !first && text === value;
-  return (
-    <Link
-      to={to}
-      className={`flex items-center justify-center text-3xl ${
-        first ? 'lg:px-2 lg:py-2' : 'pr-3 p-3 lg:pr-10'
-      } w-fit hover:rounded-full hover:bg-bordergray`}
-    >
-      {bold && !!ActiveIcon ? (
-        <ActiveIcon className='text-2xl lg:mr-6' />
-      ) : (
-        <Icon className={`text-2xl ${!first && 'lg:mr-6'}`} />
-      )}
-      {text && (
-        <span
-          className={`hidden lg:block text-xl ${
-            bold ? 'font-bold' : 'font-normal'
-          }`}
-        >
-          {text}
-        </span>
-      )}
-    </Link>
-  );
-}
-
-function TweetModal({
-  open,
-  setOpen
-}: {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
-  const form = useForm({
-    initialValues: {
-      text: ''
-    },
-    validate: {
-      text: (value) =>
-        validator.isLength(value, { min: 1, max: 280 })
-          ? null
-          : 'text length should be 1-280'
-    }
-  });
-  const { user } = useUserStore();
-
-  const addTweet = useMutation({
-    mutationFn: createTweet,
-    onSuccess: (data) => {
-      queryClient.setQueryData<LatestTweetsType[]>(['Tweet'], (old) => [
-        {
-          ...user,
-          ...data
-        },
-        ...old!
-      ]);
-      queryClient.setQueryData(['Tweet', data.id], data);
-    }
-  });
-
-  const handleSubmit = async (data: any) => {
-    const { text } = data;
-    try {
-      await addTweet.mutateAsync(text);
-    } catch (err: any) {
-      throw err;
-    } finally {
-      setOpen(false);
-    }
-  };
-  return (
-    <Modal
-      opened={open}
-      onClose={() => setOpen(false)}
-      size='lg'
-      closeOnClickOutside
-    >
-      <div className='flex w-full py-8 px-4'>
-        <img
-          crossOrigin='anonymous'
-          className='cursor-pointer w-14 h-14 rounded-full bg-white'
-          src={`${user?.pfp || 'defaultpfp.png'}`}
-          alt='tweet profile picture'
-        />
-        <form
-          onSubmit={form.onSubmit(handleSubmit)}
-          className='flex flex-col min-h-16 justify-evenly pt-1 w-full ml-3'
-        >
-          <Textarea
-            className='w-full bg-black border-none outline-none text-md resize-none overflow-hidden placeholder:text-gray-500'
-            placeholder="what's happening?"
-            maxLength={250}
-            name='text'
-            autosize
-            minRows={3}
-            maxRows={10}
-            styles={{
-              input: {
-                border: 'none',
-                outline: 'none'
-              }
-            }}
-            {...form.getInputProps('text')}
-          />
-          <div className='flex gap-2 w-full justify-end mt-3 items-center'>
-            <button
-              type='submit'
-              className='rounded-full bg-blue-500 py-4 px-6 text-sm'
-            >
-              Tweet
-            </button>
-          </div>
-        </form>
-      </div>
-    </Modal>
   );
 }
 

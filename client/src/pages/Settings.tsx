@@ -110,8 +110,11 @@ function Settings() {
           </div>
         </div>
       </div>
-      <div className='flex w-full'>
-        <form className='w-full p-5' onSubmit={form.onSubmit(onSubmit)}>
+      <div className='flex md:flex-row flex-col w-full'>
+        <form
+          className='w-full p-5 border-b border-b-bordergray'
+          onSubmit={form.onSubmit(onSubmit)}
+        >
           <Title order={3}>General Information</Title>
           <div className='flex flex-col justify-center w-1/2'>
             <TextInput
@@ -139,7 +142,7 @@ function Settings() {
           </div>
         </form>
         <form
-          className='flex flex-col justify-center items-center gap-2 w-full'
+          className='flex flex-col justify-center items-center gap-2 w-full md:mt-0 mt-20'
           onSubmit={handleImageUpload}
         >
           <div>

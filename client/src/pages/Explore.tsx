@@ -9,7 +9,6 @@ import { useMutation, useQuery } from 'react-query';
 import { createTweet, getExploreTweets } from '@/api/tweetAPI';
 import { queryClient } from '@/api/api';
 import validator from 'validator';
-import { LatestTweetsType } from '@common/types/Endpoints';
 
 function Explore() {
   const { user } = useUserStore();
