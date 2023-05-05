@@ -371,3 +371,9 @@ export async function addComment(
     con?.release();
   }
 }
+
+// WIP
+// The point of this function is to get the parent tweet of any comment no matter how deeply nested it is (recursive function sets a limit of 1000 iterations)
+export async function getCommentParent(commentId: string) {
+  const query = `with recursive cte as (select replying_to, comment_id from comments where comment_id=? union all select comments.replying_to, comments.comment_id from cte join comments on comments.comment_id=cte.replying_to) select replying_to from cte;`;
+}
