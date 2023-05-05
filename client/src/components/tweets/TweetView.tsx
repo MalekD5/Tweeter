@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import { ElementType } from '../Dropdown';
+import { format, parseISO } from 'date-fns';
+import type { Tweet } from '@common/types/Main';
+
 import TweetOptions from './TweetOptions';
 import TweetButtons from './TweetButtons';
-import type { Tweet } from '@common/types/Main';
 
 type TweetViewProps = {
   tweet: Tweet;
@@ -14,6 +16,10 @@ function TweetView({ tweet }: TweetViewProps) {
   const [reference, setReference] = useState<ElementType>(null);
 
   const analyticsEmpty = tweet.likes === 0 && tweet.retweets === 0;
+  const created_at = format(
+    parseISO(tweet.created_at),
+    'h:mm b · LLL d, yyyy '
+  );
 
   return (
     <div className='flex flex-col'>
@@ -55,7 +61,7 @@ function TweetView({ tweet }: TweetViewProps) {
           <p className='mt-0.5 w-11/12 break-words text-md font-normal'>
             {tweet.content}
           </p>
-          <p className='text-textgray text-sm'>7:38 AM · Apr 26, 2023</p>
+          <p className='text-textgray text-sm'>{created_at}</p>
         </div>
       </div>
       {!analyticsEmpty && (

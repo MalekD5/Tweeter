@@ -6,6 +6,7 @@ import { AiOutlineRetweet } from 'react-icons/ai';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import { Text } from '@mantine/core';
 import { Link, useLocation } from 'react-router-dom';
+import { parseISO, formatDistanceToNowStrict } from 'date-fns';
 
 import type { Tweet } from '@common/types/Main';
 import type { ElementType } from '../Dropdown';
@@ -21,6 +22,7 @@ function TweetCardV3(props: TweetProps) {
   const [reference, setReference] = useState<ElementType>(null);
 
   const location = useLocation();
+  const created_at = formatDistanceToNowStrict(parseISO(tweet.created_at));
 
   return (
     <div className='py-3 px-4 w-full border-t border-t-bordergray border-b border-b-bordergray hover:bg-white/20 hover:cursor-pointer'>
@@ -46,7 +48,7 @@ function TweetCardV3(props: TweetProps) {
               <div className='flex gap-1 text-sm'>
                 <span className='font-semibold'>{tweet.displayname}</span>
                 <span className='text-textgray'>
-                  @{tweet.username} · {tweet.created_at}
+                  @{tweet.username} · {created_at}
                 </span>
               </div>
               <button
