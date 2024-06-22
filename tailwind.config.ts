@@ -48,6 +48,10 @@ const config = {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
         },
+        bluish: {
+          DEFAULT: "rgb(29, 155, 240)",
+          foreground: "rgb(26, 140, 216)"
+        },
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
