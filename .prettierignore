@@ -1,0 +1,5 @@
+.prettierrc.js
+.eslintrc.js
+*.config.ts
+*.config.mjs
+
