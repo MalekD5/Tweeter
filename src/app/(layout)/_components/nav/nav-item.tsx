@@ -49,7 +49,7 @@ export default function NavItem(props: NavItemProps) {
         })}
       >
         <Slot className="size-8">{isCurrentPage && props.active ? props.active : props.icon}</Slot>
-        {!props.removeText && capitalize(props.type)}
+        <p className="hidden lg:block">{!props.removeText && capitalize(props.type)}</p>
       </div>
     </Link>
   );
