@@ -1,5 +1,4 @@
 import { auth } from '@/lib/auth';
-import Image from 'next/image';
 import { redirect } from 'next/navigation';
 
 export default async function Home() {
@@ -8,5 +7,6 @@ export default async function Home() {
   if (!session) {
     return redirect('/');
   }
+
   return <div>Home page</div>;
 }
