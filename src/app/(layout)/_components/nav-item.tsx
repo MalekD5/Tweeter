@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { useNav } from '../../_context/nav-context';
+import { useNav } from '../_context/nav-context';
 import { cva } from 'class-variance-authority';
 import { capitalize } from '@/lib/utils';
-import { Page } from '../../_context/types';
+import { Page } from '../_context/types';
 import { Slot } from '@radix-ui/react-slot';
 
 type NavItemProps = {

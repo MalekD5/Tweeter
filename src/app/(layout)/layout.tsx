@@ -4,8 +4,8 @@ import { TbNotes, TbUser, TbUserFilled } from 'react-icons/tb';
 import { IoMailOutline, IoMailSharp, IoSettingsOutline, IoSettingsSharp } from 'react-icons/io5';
 import { Button } from '@/components/ui/button';
 import User from './_components/user';
-import NavContainer from './_components/nav/nav-container';
-import NavItem from './_components/nav/nav-item';
+import NavContainer from './_components/nav-container';
+import NavItem from './_components/nav-item';
 import { Page } from './_context/types';
 import { LiaFeatherAltSolid } from 'react-icons/lia';
 
