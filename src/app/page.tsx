@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { signIn } from '@/lib/auth';
 import Image from 'next/image';
 
 export default function Home() {
@@ -33,10 +34,18 @@ export default function Home() {
             <h3 className="mb-8 text-3xl font-bold">Join Today.</h3>
             <div className="mb-7 space-y-4">
               <div className="flex flex-col gap-2">
-                <Button size="lg" tabIndex={0} rounded="full" variant="white">
-                  <Image aria-hidden src="/google.svg" alt="Google" width={24} height={24} />
-                  Sign up using Google
-                </Button>
+                <form
+                  className="w-full"
+                  action={async () => {
+                    'use server';
+                    await signIn('google');
+                  }}
+                >
+                  <Button type="submit" size="lg" tabIndex={0} rounded="full" variant="white">
+                    <Image aria-hidden src="/google.svg" alt="Google" width={24} height={24} />
+                    Sign up using Google
+                  </Button>
+                </form>
               </div>
               <p className="max-w-xs text-xs font-light text-zinc-500">
                 By Signing up you agree to our <span className="text-bluish">Terms of Service</span>{' '}
