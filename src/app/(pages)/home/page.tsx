@@ -1,11 +1,12 @@
 import { auth } from '@/lib/auth';
+import Image from 'next/image';
 import { redirect } from 'next/navigation';
 
-export default async function page() {
+export default async function Home() {
   const session = await auth();
 
   if (!session) {
     return redirect('/');
   }
-  return <div>username: {session.user?.name}</div>;
+  return <div>Home page</div>;
 }
