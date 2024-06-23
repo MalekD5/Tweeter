@@ -37,8 +37,11 @@ export default async function User() {
             'use server';
             await signOut();
           }}
+          className="border-none outline-none"
         >
-          <Button variant="ghost">Logout from @{session.user?.name}</Button>
+          <Button className="border-none outline-none" type="submit" variant="ghost" rounded="full">
+            Logout from {session.user?.name}
+          </Button>
         </form>
       </PopoverContent>
     </Popover>
