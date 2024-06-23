@@ -1,18 +1,6 @@
+'use client';
 import { createContext, useContext } from 'react';
-
-export enum Page {
-  HOME = 'home',
-  PROFILE = 'profile',
-  BOOKMARKS = 'bookmarks',
-  LISTS = 'lists',
-  SETTINGS = 'settings',
-  MESSAGES = 'messages',
-}
-
-type DataType = {
-  page: Page;
-  setPage: (page: Page) => void;
-};
+import { DataType, Page } from './types';
 
 const NAV_DATA: DataType = {
   page: Page.HOME,
