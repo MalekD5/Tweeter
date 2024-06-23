@@ -7,7 +7,6 @@ import User from './_components/user';
 import NavContainer from './_components/nav/nav-container';
 import NavItem from './_components/nav/nav-item';
 import { Page } from './_context/types';
-import { BsFeather } from 'react-icons/bs';
 import { LiaFeatherAltSolid } from 'react-icons/lia';
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
