@@ -6,6 +6,7 @@ import { useNav } from '../../_context/nav-context';
 import { cva } from 'class-variance-authority';
 import { capitalize } from '@/lib/utils';
 import { Page } from '../../_context/types';
+import { Slot } from '@radix-ui/react-slot';
 
 type NavItemProps = {
   type: Page;
@@ -47,7 +48,7 @@ export default function NavItem(props: NavItemProps) {
           text: isCurrentPage ? 'bold' : undefined,
         })}
       >
-        {isCurrentPage && props.active ? props.active : props.icon}
+        <Slot className="size-8">{isCurrentPage && props.active ? props.active : props.icon}</Slot>
         {!props.removeText && capitalize(props.type)}
       </div>
     </Link>
