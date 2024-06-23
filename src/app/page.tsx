@@ -1,9 +1,14 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { signIn } from '@/lib/auth';
+import { auth, signIn } from '@/lib/auth';
 import Image from 'next/image';
+import { redirect } from 'next/navigation';
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+
+  if (session?.user) redirect('/home');
+
   return (
     <>
       <main className="grid w-full grid-cols-1 gap-0 px-6 md:grid-cols-2 md:gap-4 md:px-0">
