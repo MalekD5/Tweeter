@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
-
-const inter = Inter({ subsets: ['latin'] });
+import { Poppins } from 'next/font/google';
 
 export const metadata: Metadata = {
   title: 'Tweeter',
@@ -16,6 +14,11 @@ export const metadata: Metadata = {
   },
 };
 
+const font = Poppins({
+  weight: '400',
+  subsets: ['latin'],
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -23,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} dark`}>{children}</body>
+      <body className={`${font.className} dark`}>{children}</body>
     </html>
   );
 }
