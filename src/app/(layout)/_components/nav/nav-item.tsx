@@ -1,11 +1,11 @@
 'use client';
 
-import { Page, useNav } from '../_context/nav-context';
-import { useState } from 'react';
 import Link from 'next/link';
+import { useState } from 'react';
+import { useNav } from '../../_context/nav-context';
 import { cva } from 'class-variance-authority';
-import { IconContext } from 'react-icons';
 import { capitalize } from '@/lib/utils';
+import { Page } from '../../_context/types';
 
 type NavItemProps = {
   type: Page;
@@ -14,7 +14,7 @@ type NavItemProps = {
   removeText?: boolean;
 };
 
-const NavItemStyle = cva('p-3 w-fit text-lg flex gap-4 items-center justify-start', {
+const NavItemStyle = cva('p-3 w-fit text-lg flex gap-4 items-center justify-start cursor-pointer', {
   variants: {
     state: {
       hover: 'bg-zinc-700 rounded-full',
@@ -25,7 +25,7 @@ const NavItemStyle = cva('p-3 w-fit text-lg flex gap-4 items-center justify-star
   },
 });
 
-export function NavItem(props: NavItemProps) {
+export default function NavItem(props: NavItemProps) {
   const { page, setPage } = useNav();
   const [hover, setHover] = useState<boolean>(false);
 
@@ -53,17 +53,3 @@ export function NavItem(props: NavItemProps) {
     </Link>
   );
 }
-
-function NavContainer({ children }: { children: React.ReactNode }) {
-  return (
-    <IconContext.Provider value={{ size: '2rem' }}>
-      <nav className="sticky top-0 flex h-screen w-4/6 flex-col gap-4 py-4">{children}</nav>
-    </IconContext.Provider>
-  );
-}
-
-const Nav = Object.assign(NavContainer, {
-  Item: NavItem,
-});
-
-export default Nav;
