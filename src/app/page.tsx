@@ -40,13 +40,19 @@ export default async function Home() {
             <div className="mb-7 space-y-4">
               <div className="flex flex-col gap-2">
                 <form
-                  className="w-full"
                   action={async () => {
                     'use server';
                     await signIn('google');
                   }}
                 >
-                  <Button type="submit" size="lg" tabIndex={0} rounded="full" variant="white">
+                  <Button
+                    type="submit"
+                    size="lg"
+                    tabIndex={0}
+                    rounded="full"
+                    variant="white"
+                    className="w-full"
+                  >
                     <Image aria-hidden src="/google.svg" alt="Google" width={24} height={24} />
                     Sign up using Google
                   </Button>
