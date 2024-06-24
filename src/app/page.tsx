@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { auth, signIn } from '@/lib/auth';
-import Image from 'next/image';
 import { redirect } from 'next/navigation';
-import { BsGoogle } from 'react-icons/bs';
+import { BsGoogle, BsTwitterX } from 'react-icons/bs';
+import { FcGoogle } from 'react-icons/fc';
 
 export default async function Home() {
   const session = await auth();
@@ -17,25 +17,11 @@ export default async function Home() {
           className="hidden h-full w-full px-4 pt-4 md:grid md:place-content-center md:px-0 md:pt-0"
           aria-hidden
         >
-          <Image
-            className="hidden md:block"
-            aria-hidden
-            src="/logo.svg"
-            alt="Logo"
-            width={350}
-            height={350}
-          />
+          <BsTwitterX className="hidden size-80 md:block" aria-hidden />
         </div>
         <div className="container md:p-5">
           <div className="w-full md:w-1/2">
-            <Image
-              className="block px-2 py-10 md:hidden"
-              aria-hidden
-              src="/logo.svg"
-              alt="Logo"
-              width={64}
-              height={64}
-            />
+            <BsTwitterX className="block size-16 px-2 py-10 md:hidden" aria-hidden />
             <h1 className="py-0 text-5xl font-bold md:py-20">Happening Now</h1>
             <h3 className="mb-8 text-3xl font-bold">Join Today.</h3>
             <div className="mb-7 space-y-4">
@@ -54,7 +40,7 @@ export default async function Home() {
                     variant="white"
                     className="w-full"
                   >
-                    <Image aria-hidden src="/google.svg" alt="Google" width={24} height={24} />
+                    <FcGoogle aria-hidden className="size-6" />
                     Sign up using Google
                   </Button>
                 </form>
