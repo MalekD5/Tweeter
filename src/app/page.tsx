@@ -3,6 +3,7 @@ import { Separator } from '@/components/ui/separator';
 import { auth, signIn } from '@/lib/auth';
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
+import { BsGoogle } from 'react-icons/bs';
 
 export default async function Home() {
   const session = await auth();
@@ -67,9 +68,26 @@ export default async function Home() {
             <Separator text="or" />
             <div className="flex flex-col space-y-4">
               <h3 className="text-xl font-bold">Already have an account?</h3>
-              <Button size="lg" rounded="full" className="text-bluish" variant="outline">
-                Sign in
-              </Button>
+              <form
+                action={async () => {
+                  'use server';
+                  await signIn('google', undefined, {
+                    prompt: 'consent',
+                    access_type: 'offline',
+                    response_type: 'code',
+                  });
+                }}
+              >
+                <Button
+                  size="lg"
+                  rounded="full"
+                  className="flex w-full gap-2 text-bluish"
+                  variant="outline"
+                >
+                  <BsGoogle />
+                  Sign in with Google
+                </Button>
+              </form>
             </div>
           </div>
         </div>
