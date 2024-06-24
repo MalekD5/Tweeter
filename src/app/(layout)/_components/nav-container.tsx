@@ -2,7 +2,7 @@
 
 import { NavContext } from '../_context/nav-context';
 import { useState } from 'react';
-import { Page } from '../_context/types';
+import { Page } from '../_types';
 
 export default function NavContainer({ children }: { children: React.ReactNode }) {
   const [page, setPage] = useState<Page>(Page.HOME);

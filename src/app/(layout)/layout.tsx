@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import User from './_components/user-card';
 import NavContainer from './_components/nav-container';
 import NavItem from './_components/nav-item';
-import { Page } from './_context/types';
+import { Page } from './_types';
 import { LiaFeatherAltSolid } from 'react-icons/lia';
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
