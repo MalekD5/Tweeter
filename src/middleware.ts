@@ -6,6 +6,10 @@ export default auth((req) => {
     return NextResponse.redirect(new URL('/', req.nextUrl.origin));
   }
 
+  if (req.nextUrl.pathname === '/api/signup') {
+    return NextResponse.next();
+  }
+
   const { auth } = req;
   if (!auth.user.username) {
     return NextResponse.redirect(new URL('/complete-signup', req.nextUrl.origin));

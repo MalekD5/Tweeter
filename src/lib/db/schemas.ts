@@ -5,6 +5,10 @@ export const users = pgTable('user', {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: text('name'),
+  username: text('username'),
+  dateOfBirth: timestamp('dateofbirth', { mode: 'date' }),
+  bio: text('bio'),
+  location: text('location'),
   email: text('email').notNull(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
   image: text('image'),
