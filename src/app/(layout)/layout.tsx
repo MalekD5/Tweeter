@@ -3,7 +3,7 @@ import { GoBookmark, GoBookmarkFill, GoHome, GoHomeFill } from 'react-icons/go';
 import { TbNotes, TbUser, TbUserFilled } from 'react-icons/tb';
 import { IoMailOutline, IoMailSharp, IoSettingsOutline, IoSettingsSharp } from 'react-icons/io5';
 import { Button } from '@/components/ui/button';
-import User from './_components/user';
+import User from './_components/user-card';
 import NavContainer from './_components/nav-container';
 import NavItem from './_components/nav-item';
 import { Page } from './_context/types';
