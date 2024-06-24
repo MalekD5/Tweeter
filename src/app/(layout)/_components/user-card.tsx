@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { auth, signOut } from '@/lib/auth';
+import Image from 'next/image';
 import { redirect } from 'next/navigation';
 import { IoIosMore } from 'react-icons/io';
 
@@ -15,8 +16,9 @@ export default async function User() {
     <Popover>
       <PopoverTrigger asChild>
         <div className="flex w-full cursor-pointer items-center justify-between gap-4 rounded-full p-3 hover:bg-zinc-700">
-          <img
+          <Image
             src={session.user?.image!}
+            unoptimized
             className="rounded-full"
             alt="user logo"
             width={40}
