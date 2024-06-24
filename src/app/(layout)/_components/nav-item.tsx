@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { useNav } from '../_context/nav-context';
+import { useNav } from '../_hooks/use-nav';
 import { cva } from 'class-variance-authority';
 import { capitalize } from '@/lib/utils';
 import { Page } from '../_types';

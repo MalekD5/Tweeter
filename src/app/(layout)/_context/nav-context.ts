@@ -8,5 +8,3 @@ const NAV_DATA: DataType = {
 };
 
 export const NavContext = createContext(NAV_DATA);
-
-export const useNav = () => useContext(NavContext);
