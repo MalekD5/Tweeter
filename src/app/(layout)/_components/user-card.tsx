@@ -26,7 +26,7 @@ export default async function User() {
           />
           <div className="hidden flex-col lg:flex">
             <p className="text-sm">{session.user?.name}</p>
-            <p className="text-sm text-zinc-700">@{session.user?.name}</p>
+            <p className="text-sm text-muted-foreground">@{session.user?.name}</p>
           </div>
           <div className="hidden grow basis-auto justify-end lg:flex">
             <IoIosMore />{' '}
