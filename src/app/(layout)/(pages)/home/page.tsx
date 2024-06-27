@@ -19,7 +19,7 @@ export default async function Home() {
   }
 
   return (
-    <div className="grid-row-1 grid grid-cols-2">
+    <div className="grid-row-1 grid grid-cols-1 lg:grid-cols-2">
       <div className="col-start-1 col-end-2 min-h-screen border-r border-r-zinc-800">
         <Tabs defaultValue="fy" className="w-full">
           <RadixTab className="grid-row-1 text-md grid grid-cols-2 border-b border-b-zinc-800 bg-background py-5">
