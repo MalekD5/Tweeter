@@ -3,3 +3,4 @@
 *.config.ts
 *.config.mjs
 
+node_modules

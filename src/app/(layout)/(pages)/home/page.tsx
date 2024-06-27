@@ -1,17 +1,21 @@
-import { Tabs } from '@/components/ui/tabs';
-import { List as RadixTab } from '@radix-ui/react-tabs';
-import TriggerItem from './_components/trigger-item';
-import TriggerContainer from './_components/trigger-container';
-import { auth } from '@/lib/auth';
-import { redirect } from 'next/navigation';
-import FyTab from './_components/for-you-tab';
-import FollowingTab from './_components/following-tab';
+import { Tabs } from "@/components/ui/tabs";
+import { List as RadixTab } from "@radix-ui/react-tabs";
+import TriggerItem from "./_components/trigger-item";
+import TriggerContainer from "./_components/trigger-container";
+import { redirect } from "next/navigation";
+import FyTab from "./_components/for-you-tab";
+import FollowingTab from "./_components/following-tab";
+import { getSession } from "@/actions/auth";
 
 export default async function Home() {
-  const session = await auth();
+  const user = await getSession();
 
-  if (!session) {
-    return redirect('/');
+  if (!user.id) {
+    return redirect("/");
+  }
+
+  if (!user.username) {
+    return redirect("/complete-signup");
   }
 
   return (

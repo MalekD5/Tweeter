@@ -6,6 +6,6 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
-    'prettier/prettier': ['error', { ...require('./.prettierrc') }],
+    "prettier/prettier": ["error", { endOfLine: "auto", semi: true}],
   }
 };

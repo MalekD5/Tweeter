@@ -1,15 +1,17 @@
-import Landing from '@/components/landing';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { auth, signIn } from '@/lib/auth';
-import { redirect } from 'next/navigation';
-import { BsGoogle, BsTwitterX } from 'react-icons/bs';
-import { FcGoogle } from 'react-icons/fc';
+import { getSession } from "@/actions/auth";
+import Landing from "@/components/landing";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { redirect } from "next/navigation";
+import { BsGoogle, BsTwitterX } from "react-icons/bs";
+import { FcGoogle } from "react-icons/fc";
 
 export default async function Home() {
-  const session = await auth();
+  const user = await getSession();
 
-  if (session?.user) redirect('/home');
+  if (user.id) {
+    return user.username ? redirect("/home") : redirect("/complete-signup");
+  }
 
   return (
     <Landing>
@@ -18,54 +20,41 @@ export default async function Home() {
       <h3 className="mb-8 text-3xl font-bold">Join Today.</h3>
       <div className="mb-7 space-y-4">
         <div className="flex flex-col gap-2">
-          <form
-            action={async () => {
-              'use server';
-              await signIn('google');
-            }}
+          <Button
+            type="submit"
+            size="lg"
+            tabIndex={0}
+            rounded="full"
+            variant="white"
+            className="w-full"
           >
-            <Button
-              type="submit"
-              size="lg"
-              tabIndex={0}
-              rounded="full"
-              variant="white"
-              className="w-full"
-            >
-              <FcGoogle aria-hidden className="size-6" />
-              Sign up using Google
-            </Button>
-          </form>
+            <FcGoogle aria-hidden className="size-6" />
+            Sign up using Google
+          </Button>
         </div>
         <p className="max-w-xs text-xs font-light text-zinc-500">
-          By Signing up you agree to our <span className="text-bluish">Terms of Service</span> and{' '}
-          <span className="text-bluish">Privacy Policy</span>, including{' '}
+          By Signing up you agree to our{" "}
+          <span className="text-bluish">Terms of Service</span> and{" "}
+          <span className="text-bluish">Privacy Policy</span>, including{" "}
           <span className="text-bluish">Cookie use</span>.
         </p>
       </div>
       <Separator text="or" />
       <div className="flex flex-col space-y-4">
         <h3 className="text-xl font-bold">Already have an account?</h3>
-        <form
-          action={async () => {
-            'use server';
-            await signIn('google', undefined, {
-              prompt: 'consent',
-              access_type: 'offline',
-              response_type: 'code',
-            });
-          }}
+
+        <Button
+          size="lg"
+          rounded="full"
+          className="flex w-full gap-2 text-bluish"
+          variant="outline"
+          asChild
         >
-          <Button
-            size="lg"
-            rounded="full"
-            className="flex w-full gap-2 text-bluish"
-            variant="outline"
-          >
+          <a href="/api/auth/oauth/google/login">
             <BsGoogle />
             Sign in with Google
-          </Button>
-        </form>
+          </a>
+        </Button>
       </div>
     </Landing>
   );

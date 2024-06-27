@@ -1,5 +1,5 @@
-import { BsTwitterX } from 'react-icons/bs';
-import Treadmark from './treadmark';
+import { BsTwitterX } from "react-icons/bs";
+import Treadmark from "./treadmark";
 
 export default function Landing({ children }: { children: React.ReactNode }) {
   return (
@@ -11,9 +11,7 @@ export default function Landing({ children }: { children: React.ReactNode }) {
         >
           <BsTwitterX className="hidden size-80 md:block" aria-hidden />
         </div>
-        <div className="container md:p-5">
-          <div className="w-full md:w-1/2">{children}</div>
-        </div>
+        <div className="container md:p-5">{children}</div>
       </main>
       <Treadmark />
     </>

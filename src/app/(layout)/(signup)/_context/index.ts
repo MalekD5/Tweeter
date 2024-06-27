@@ -1,6 +1,6 @@
-'use client';
-import { createContext, useContext } from 'react';
-import { DataType, Page } from '../_types';
+"use client";
+import { createContext } from "react";
+import { DataType, Page } from "./types";
 
 const NAV_DATA: DataType = {
   page: Page.HOME,

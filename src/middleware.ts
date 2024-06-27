@@ -1,22 +1,27 @@
-import { auth } from '@/lib/auth';
-import { NextResponse } from 'next/server';
+import { verifyRequestOrigin } from "@/lib/utils";
+import { NextRequest, NextResponse } from "next/server";
 
-export default auth((req) => {
-  if (!req.auth) {
-    return NextResponse.redirect(new URL('/', req.nextUrl.origin));
-  }
-
-  if (req.nextUrl.pathname === '/api/signup') {
+export default async function middleware(request: NextRequest) {
+  if (request.method === "GET") {
     return NextResponse.next();
   }
 
-  const { auth } = req;
-  if (!auth.user.username) {
-    return NextResponse.redirect(new URL('/complete-signup', req.nextUrl.origin));
+  const originHeader = request.headers.get("Origin");
+  const hostHeader = request.headers.get("Host");
+  if (
+    !originHeader ||
+    !hostHeader ||
+    !verifyRequestOrigin(originHeader, [hostHeader])
+  ) {
+    return new NextResponse(null, {
+      status: 403,
+    });
   }
   return NextResponse.next();
-});
+}
 
 export const config = {
-  matcher: ['/((?!api/auth|_next/static|_next/image|favicon.ico|logo.svg|complete-signup|$).*)'],
+  matcher: [
+    "/((?!api/auth|_next/static|_next/image|favicon.ico|logo.svg|complete-signup|$).*)",
+  ],
 };

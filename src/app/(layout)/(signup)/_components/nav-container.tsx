@@ -1,10 +1,14 @@
-'use client';
+"use client";
 
-import { NavContext } from '../_context/nav-context';
-import { useState } from 'react';
-import { Page } from '../_types';
+import { NavContext } from "../_context";
+import { useState } from "react";
+import { Page } from "../_context/types";
 
-export default function NavContainer({ children }: { children: React.ReactNode }) {
+export default function NavContainer({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [page, setPage] = useState<Page>(Page.HOME);
 
   return (

@@ -1,4 +1,4 @@
-import { Trigger } from '@radix-ui/react-tabs';
+import { Trigger } from "@radix-ui/react-tabs";
 
 export default function TriggerItem({
   value,
