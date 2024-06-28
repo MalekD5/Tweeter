@@ -2,7 +2,7 @@ import { google } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { OAuth2RequestError } from "arctic";
 import { db } from "@/lib/db";
-import { users } from "@/lib/db/schemas";
+import { usersTable } from "@/lib/db/schemas";
 import { eq } from "drizzle-orm";
 import { getSession } from "@/actions/auth";
 import crypto from "crypto";
@@ -14,13 +14,7 @@ export async function GET(request: Request): Promise<Response> {
   const storedState = cookies().get("google_oauth_state")?.value ?? null;
   const codeVerifier = cookies().get("code_verifier")?.value ?? null;
 
-  if (
-    !code ||
-    !state ||
-    !storedState ||
-    state !== storedState ||
-    !codeVerifier
-  ) {
+  if (!code || !state || !storedState || state !== storedState || !codeVerifier) {
     return new Response(null, {
       status: 400,
     });
@@ -28,20 +22,17 @@ export async function GET(request: Request): Promise<Response> {
 
   try {
     const tokens = await google.validateAuthorizationCode(code, codeVerifier);
-    const googleUserResponse = await fetch(
-      "https://www.googleapis.com/oauth2/v1/userinfo",
-      {
-        headers: {
-          Authorization: `Bearer ${tokens.accessToken}`,
-        },
-      }
-    );
+    const googleUserResponse = await fetch("https://www.googleapis.com/oauth2/v1/userinfo", {
+      headers: {
+        Authorization: `Bearer ${tokens.accessToken}`,
+      },
+    });
     const googleUser: GoogleUser = await googleUserResponse.json();
     // Replace this with your own DB client.
     const [existingUser] = await db
       .select()
-      .from(users)
-      .where(eq(users.google_id, googleUser.id));
+      .from(usersTable)
+      .where(eq(usersTable.googleId, googleUser.id));
 
     if (existingUser) {
       const session = await getSession();
@@ -64,9 +55,9 @@ export async function GET(request: Request): Promise<Response> {
     const userId = crypto.randomUUID(); // 16 characters long
 
     // Replace this with your own DB client.
-    await db.insert(users).values({
+    await db.insert(usersTable).values({
       id: userId,
-      google_id: googleUser.id,
+      googleId: googleUser.id,
       email: googleUser.email,
       emailVerified: googleUser.verified_email,
       name: googleUser.name,

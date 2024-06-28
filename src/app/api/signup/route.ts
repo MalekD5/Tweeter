@@ -1,6 +1,6 @@
 import { getSession } from "@/actions/auth";
 import { db } from "@/lib/db";
-import { users } from "@/lib/db/schemas";
+import { usersTable } from "@/lib/db/schemas";
 import { SignUpSchema } from "@/lib/zod";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -8,11 +8,9 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   const session = await getSession();
 
-  if (!session.id)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  if (session.username)
-    return NextResponse.json({ error: "Forbidden" }, { status: 400 });
+  if (session.username) return NextResponse.json({ error: "Forbidden" }, { status: 400 });
 
   const body = await req.json();
 
@@ -26,7 +24,7 @@ export async function POST(req: NextRequest) {
 
   try {
     await db
-      .update(users)
+      .update(usersTable)
       .set({
         username: data.username,
         dateOfBirth: new Date(data.birthDay),
@@ -34,7 +32,7 @@ export async function POST(req: NextRequest) {
         location: data.location,
         bio: data.bio,
       })
-      .where(eq(users.id, session.id));
+      .where(eq(usersTable.id, session.id));
 
     session.username = data.username;
     session.displayName = data.displayName;
@@ -43,9 +41,6 @@ export async function POST(req: NextRequest) {
 
     return new Response(undefined, { status: 200 });
   } catch (err) {
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
