@@ -5,7 +5,7 @@ import { StepContext } from "../_context";
 import { useContext } from "react";
 import { useForm as useRHForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { completeSignUp } from "@/actions/forms";
+import { completeSignUp } from "@/actions/auth";
 import { useFormState, useFormStatus } from "react-dom";
 import {
   Form,
@@ -42,13 +42,10 @@ export function StepThree() {
     resolver: zodResolver(StepSchema),
   });
 
-  const [formState, formAction] = useFormState<_StepServerAction, FormData>(
-    completeSignUp,
-    {
-      success: true,
-      redirect: false,
-    }
-  );
+  const [formState, formAction] = useFormState<_StepServerAction, FormData>(completeSignUp, {
+    success: true,
+    redirect: false,
+  });
 
   if (formState.success && formState.redirect) {
     setTimeout(() => router.push("/home"), 2000);
@@ -81,9 +78,7 @@ export function StepThree() {
                   {...field}
                 />
               </FormControl>
-              <FormDescription>
-                This will be displayed on your profile.
-              </FormDescription>
+              <FormDescription>This will be displayed on your profile.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -97,32 +92,15 @@ export function StepThree() {
               <FormControl>
                 <Input type="text" {...field} />
               </FormControl>
-              <FormDescription>
-                This will be displayed on your profile.
-              </FormDescription>
+              <FormDescription>This will be displayed on your profile.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <input
-          readOnly
-          className="hidden"
-          name="username"
-          value={state.username}
-        />
-        <input
-          readOnly
-          className="hidden"
-          name="displayName"
-          value={state.displayName}
-        />
-        <input
-          readOnly
-          className="hidden"
-          name="birthDay"
-          value={state.birthDay.toISOString()}
-        />
+        <input readOnly className="hidden" name="username" value={state.username} />
+        <input readOnly className="hidden" name="displayName" value={state.displayName} />
+        <input readOnly className="hidden" name="birthDay" value={state.birthDay.toISOString()} />
 
         <div className="flex w-full justify-between gap-2">
           <PreviousButton
@@ -139,13 +117,7 @@ export function StepThree() {
   );
 }
 
-function PreviousButton({
-  onPrevious,
-  redirect,
-}: {
-  onPrevious: () => void;
-  redirect: boolean;
-}) {
+function PreviousButton({ onPrevious, redirect }: { onPrevious: () => void; redirect: boolean }) {
   const { pending } = useFormStatus();
   return (
     <Button disabled={pending || redirect} variant="ghost" onClick={onPrevious}>
@@ -154,13 +126,7 @@ function PreviousButton({
   );
 }
 
-function TrackButton({
-  redirect,
-  isValid,
-}: {
-  redirect: boolean;
-  isValid: boolean;
-}) {
+function TrackButton({ redirect, isValid }: { redirect: boolean; isValid: boolean }) {
   const { pending } = useFormStatus();
   return (
     <Button
