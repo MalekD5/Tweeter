@@ -28,8 +28,6 @@ const StepSchema = SignUpSchema.pick({
   location: true,
 });
 
-type StepSchemaType = z.infer<typeof StepSchema>;
-
 export function StepThree() {
   const router = useRouter();
   const { state, dispatch } = useContext(StepContext);
