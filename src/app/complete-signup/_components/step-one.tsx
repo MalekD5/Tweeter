@@ -17,11 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const StepSchema = SignUpSchema.pick({
   username: true,
@@ -52,10 +48,7 @@ export function StepOne() {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full space-y-6 lg:w-2/3"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 lg:w-2/3">
         <h3 className="text-center">Step 1 of 3</h3>
         <FormField
           control={form.control}
@@ -83,10 +76,9 @@ export function StepOne() {
             </p>
           </PopoverTrigger>
           <PopoverContent className="bg-zin-800 max-w-md text-sm">
-            Our systems have detected that you did not complete the signup
-            process. in order to proceed you must provide the following
-            information: username, display name, birth day. you can also provide
-            some optional information such as: location and bio.
+            Our systems have detected that you did not complete the signup process. in order to
+            proceed you must provide the following information: username, display name, birth day.
+            you can also provide some optional information such as: location and bio.
           </PopoverContent>
         </Popover>
       </form>

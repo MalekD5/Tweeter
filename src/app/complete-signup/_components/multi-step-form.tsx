@@ -9,11 +9,5 @@ import { StepThree } from "./step-three";
 export function MultiStepForm() {
   const { state } = useContext(StepContext);
 
-  return state.index === 0 ? (
-    <StepOne />
-  ) : state.index === 1 ? (
-    <StepTwo />
-  ) : (
-    <StepThree />
-  );
+  return state.index === 0 ? <StepOne /> : state.index === 1 ? <StepTwo /> : <StepThree />;
 }

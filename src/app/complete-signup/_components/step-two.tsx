@@ -17,11 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn, isInvalidDate } from "@/lib/utils";
@@ -80,10 +76,7 @@ export function StepTwo() {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full space-y-6 lg:w-2/3"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 lg:w-2/3">
         <h3 className="text-center">Step 2 of 3</h3>
 
         <FormField
@@ -122,7 +115,7 @@ export function StepTwo() {
                       variant={"outline"}
                       className={cn(
                         "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
+                        !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value ? dateValue() : <span>Pick a date</span>}
@@ -130,10 +123,7 @@ export function StepTwo() {
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent
-                  className="flex w-auto flex-col space-y-2 p-2"
-                  align="start"
-                >
+                <PopoverContent className="flex w-auto flex-col space-y-2 p-2" align="start">
                   <Input type="date" onChange={onDateSelect} />
                   <div className="rounded-md border">
                     <Calendar
@@ -149,9 +139,7 @@ export function StepTwo() {
                   </div>
                 </PopoverContent>
               </Popover>
-              <FormDescription>
-                Your date of birth is used to calculate your age.
-              </FormDescription>
+              <FormDescription>Your date of birth is used to calculate your age.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -161,10 +149,7 @@ export function StepTwo() {
           <Button type="button" variant="ghost" onClick={onPrevious}>
             Previous
           </Button>
-          <Button
-            type="submit"
-            disabled={!form.formState.isValid || !dateChanged}
-          >
+          <Button type="submit" disabled={!form.formState.isValid || !dateChanged}>
             Next
           </Button>
         </div>
