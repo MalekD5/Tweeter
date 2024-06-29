@@ -27,6 +27,8 @@ export const tweetsTable = pgTable("tweet", {
   hasEntities: boolean("has_entities").notNull().default(false),
 });
 
+export const entityType = pgEnum("entity_type", ["image", "video", "user"]);
+
 export const entityTable = pgTable("tweet_entity", {
   id: text("id")
     .primaryKey()
@@ -34,7 +36,7 @@ export const entityTable = pgTable("tweet_entity", {
   tweetId: text("tweet_id")
     .notNull()
     .references(() => tweetsTable.id),
-  entityType: pgEnum("entity_type", ["image", "video", "user"]) as any,
+  entityType: entityType("entity_type"),
   entityUrl: text("entity_url").notNull(),
 });
 
