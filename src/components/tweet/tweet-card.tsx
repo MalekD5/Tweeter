@@ -1,5 +1,6 @@
 import type { DBTweet, DBUser } from "@/lib/db/schemas";
-import { formatDistanceToNow } from "date-fns";
+import { DotFilledIcon } from "@radix-ui/react-icons";
+import { formatDistanceToNow, formatDistanceToNowStrict } from "date-fns";
 import Image from "next/image";
 import { BsThreeDots } from "react-icons/bs";
 
@@ -22,7 +23,8 @@ export default function TweetCard({ tweet, user }: TweetCardProps) {
             <div className="flex w-full items-center gap-1 text-sm">
               <p className="font-bold">{user.name!}</p>
               <p className="text-muted-foreground">@{user.username!}</p>
-              <p className="text-muted-foreground">{formatDistanceToNow(tweet.createdAt)}</p>
+              <DotFilledIcon className="size-2 text-muted-foreground" />
+              <p className="text-muted-foreground">{formatDistanceToNowStrict(tweet.createdAt)}</p>
             </div>
             <BsThreeDots />
           </div>
