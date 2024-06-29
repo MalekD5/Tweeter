@@ -55,14 +55,16 @@ export async function completeSignUp(
     };
   }
 
+  const { data } = checkFormat;
+
   await db
     .update(usersTable)
     .set({
-      username: checkFormat.data.username,
-      dateOfBirth: new Date(checkFormat.data.birthDay),
-      name: checkFormat.data.displayName,
-      location: checkFormat.data.location,
-      bio: checkFormat.data.bio,
+      username: data.username,
+      dateOfBirth: new Date(data.birthDay),
+      name: data.displayName,
+      location: data.location,
+      bio: data.bio,
     })
     .where(eq(usersTable.id, session.id));
 
