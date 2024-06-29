@@ -12,7 +12,7 @@ import { LiaFeatherAltSolid } from "react-icons/lia";
 export default async function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="grid min-h-screen grid-cols-[100px_1fr] grid-rows-1 lg:grid-cols-[0.8fr_1fr_1fr]">
-      <header className="relative col-start-1 col-end-2 flex w-full justify-end border-r border-zinc-700">
+      <header className="sticky top-0 col-start-1 col-end-2 flex max-h-screen w-full justify-end border-r border-zinc-700">
         <div className="w-4/6 pr-2">
           <div className="relative">
             <NavContainer>
