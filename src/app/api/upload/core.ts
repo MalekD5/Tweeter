@@ -26,4 +26,4 @@ export const fileRouter = {
     })),
 } satisfies FileRouter;
 
-export type OurFileRouter = typeof fileRouter;
+export type FileRouterType = typeof fileRouter;
