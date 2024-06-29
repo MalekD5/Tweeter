@@ -15,19 +15,16 @@ type NavItemProps = {
   removeText?: boolean;
 };
 
-const NavItemStyle = cva(
-  "p-3 w-fit text-lg flex gap-4 items-center justify-start cursor-pointer",
-  {
-    variants: {
-      state: {
-        hover: "bg-zinc-700 rounded-full",
-      },
-      text: {
-        bold: "font-bold",
-      },
+const NavItemStyle = cva("p-3 w-fit text-lg flex gap-4 items-center justify-start cursor-pointer", {
+  variants: {
+    state: {
+      hover: "bg-zinc-700 rounded-full",
     },
-  }
-);
+    text: {
+      bold: "font-bold",
+    },
+  },
+});
 
 export default function NavItem(props: NavItemProps) {
   const { page, setPage } = useNav();
@@ -51,12 +48,8 @@ export default function NavItem(props: NavItemProps) {
           text: isCurrentPage ? "bold" : undefined,
         })}
       >
-        <Slot className="size-8">
-          {isCurrentPage && props.active ? props.active : props.icon}
-        </Slot>
-        <p className="hidden lg:block">
-          {!props.removeText && capitalize(props.type)}
-        </p>
+        <Slot className="size-8">{isCurrentPage && props.active ? props.active : props.icon}</Slot>
+        <p className="hidden lg:block">{!props.removeText && capitalize(props.type)}</p>
       </div>
     </Link>
   );
