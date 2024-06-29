@@ -17,10 +17,7 @@ function safeURL(url: URL | string): URL | null {
   }
 }
 
-export function verifyRequestOrigin(
-  origin: string,
-  allowedDomains: string[]
-): boolean {
+export function verifyRequestOrigin(origin: string, allowedDomains: string[]): boolean {
   if (!origin || allowedDomains.length === 0) return false;
   const originHost = safeURL(origin)?.host ?? null;
   if (!originHost) return false;

@@ -3,11 +3,7 @@
 import { getSession } from "@/actions/auth";
 import { logout } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { IoIosMore } from "react-icons/io";
@@ -40,12 +36,7 @@ export default async function User() {
       </PopoverTrigger>
       <PopoverContent className="w-60">
         <form action={logout} className="border-none outline-none">
-          <Button
-            className="border-none outline-none"
-            type="submit"
-            variant="ghost"
-            rounded="full"
-          >
+          <Button className="border-none outline-none" type="submit" variant="ghost" rounded="full">
             Logout from @{user.username}
           </Button>
         </form>
