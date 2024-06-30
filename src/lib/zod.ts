@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const SignUpSchema = z.object({
+export const signUpSchema = z.object({
   username: z
     .string()
     .min(3)
@@ -12,4 +12,9 @@ export const SignUpSchema = z.object({
   bio: z.string().max(200).optional(),
 });
 
-export type SignUp = z.infer<typeof SignUpSchema>;
+export const postTweetSchema = z.object({
+  text: z.string().min(1).max(250),
+});
+
+export type SignUpSchema = z.infer<typeof signUpSchema>;
+export type PostTweetSchema = z.infer<typeof postTweetSchema>;
