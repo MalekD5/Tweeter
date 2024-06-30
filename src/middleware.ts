@@ -8,11 +8,7 @@ export default async function middleware(request: NextRequest) {
 
   const originHeader = request.headers.get("Origin");
   const hostHeader = request.headers.get("Host");
-  if (
-    !originHeader ||
-    !hostHeader ||
-    !verifyRequestOrigin(originHeader, [hostHeader])
-  ) {
+  if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
     return new NextResponse(null, {
       status: 403,
     });
@@ -22,6 +18,6 @@ export default async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api/auth|_next/static|_next/image|favicon.ico|logo.svg|complete-signup|$).*)",
+    "/((?!api/auth|api/uploadthing|_next/static|_next/image|favicon.ico|logo.svg|complete-signup|$).*)",
   ],
 };
