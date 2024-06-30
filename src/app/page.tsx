@@ -33,8 +33,7 @@ export default async function Home() {
           </Button>
         </div>
         <p className="max-w-xs text-xs font-light text-zinc-500">
-          By Signing up you agree to our{" "}
-          <span className="text-bluish">Terms of Service</span> and{" "}
+          By Signing up you agree to our <span className="text-bluish">Terms of Service</span> and{" "}
           <span className="text-bluish">Privacy Policy</span>, including{" "}
           <span className="text-bluish">Cookie use</span>.
         </p>
