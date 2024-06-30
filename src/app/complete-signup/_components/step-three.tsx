@@ -1,6 +1,5 @@
-import { SignUpSchema } from "@/lib/zod";
+import { signUpSchema } from "@/lib/zod";
 import { useRouter } from "next/navigation";
-import { z } from "zod";
 import { StepContext } from "../_context";
 import { useContext } from "react";
 import { useForm as useRHForm } from "react-hook-form";
@@ -23,7 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/spinner";
 
-const StepSchema = SignUpSchema.pick({
+const StepSchema = signUpSchema.pick({
   bio: true,
   location: true,
 });
