@@ -1,5 +1,6 @@
 import { getSession } from "@/actions/auth";
 import { Textarea } from "../ui/textarea";
+import PostTweetForm from "./client/post-tweet-form";
 
 export default async function PostTweet() {
   const session = await getSession();
@@ -18,11 +19,7 @@ export default async function PostTweet() {
           />
         </div>
         <div className="flex h-auto w-full flex-col overflow-hidden text-wrap break-words">
-          <Textarea
-            autosize
-            placeholder="What is happening?"
-            className="h-full w-full resize-none break-words border-none focus:!shadow-none focus:!outline-none focus-visible:ring-0"
-          />
+          <PostTweetForm />
         </div>
       </article>
     </div>
