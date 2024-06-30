@@ -3,7 +3,7 @@
 import { IRON_SESSION_COOKIE_NAME, SessionData } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { usersTable } from "@/lib/db/schemas";
-import { SignUpSchema } from "@/lib/zod";
+import { signUpSchema } from "@/lib/zod";
 import { eq } from "drizzle-orm";
 import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
@@ -39,7 +39,7 @@ export async function completeSignUp(
       error: "Complete signup already done",
     };
 
-  const checkFormat = await SignUpSchema.safeParseAsync({
+  const checkFormat = await signUpSchema.safeParseAsync({
     username: formData.get("username") as string,
     displayName: formData.get("displayName") as string,
     birthDay: new Date(formData.get("birthDay") as string),
