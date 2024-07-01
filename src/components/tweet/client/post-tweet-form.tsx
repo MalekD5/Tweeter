@@ -47,31 +47,28 @@ export default function PostTweetForm() {
     },
   });
 
-  const onDrop = useCallback(
-    async (acceptedFiles: File[]) => {
-      setDragging(false);
-      if (attachment.type !== "file") return;
-      const urls = attachment.urls;
-      if (urls.length + acceptedFiles.length > 4) {
-        return;
-      }
+  const onDrop = async (acceptedFiles: File[]) => {
+    setDragging(false);
+    if (attachment.type !== "file") return;
+    const urls = attachment.urls;
+    if (urls.length + acceptedFiles.length > 4) {
+      return;
+    }
 
-      const uploadedFiles = await startUpload(acceptedFiles);
+    const uploadedFiles = await startUpload(acceptedFiles);
 
-      if (!uploadedFiles) return;
+    if (!uploadedFiles) return;
 
-      for (const uploadedFile of uploadedFiles) {
-        urls.push(uploadedFile.url);
-      }
+    for (const uploadedFile of uploadedFiles) {
+      urls.push(uploadedFile.url);
+    }
 
-      setOpen(true);
-      setAttachments({
-        type: "file",
-        urls,
-      });
-    },
-    [attachment, startUpload],
-  );
+    setOpen(true);
+    setAttachments({
+      type: "file",
+      urls,
+    });
+  };
 
   const { getInputProps, getRootProps } = useDropzone({
     multiple: true,
@@ -154,7 +151,6 @@ export default function PostTweetForm() {
                 className="cursor-pointer rounded-full p-2 hover:bg-bluish/30"
               >
                 <FaImage className="size-4 text-bluish" />
-                <Input multiple max={4} {...getInputProps()} />
               </div>
               <button
                 onClick={(e) => e.preventDefault()}
