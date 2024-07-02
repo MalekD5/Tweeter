@@ -7,13 +7,15 @@ import { signUpSchema } from "@/lib/zod";
 import { eq } from "drizzle-orm";
 import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
+import { cache } from "react";
 
-export async function getSession() {
-  return await getIronSession<SessionData>(cookies(), {
-    cookieName: IRON_SESSION_COOKIE_NAME,
-    password: process.env.IRON_SESSION_SECRET!,
-  });
-}
+export const getSession = cache(
+  async () =>
+    await getIronSession<SessionData>(cookies(), {
+      cookieName: IRON_SESSION_COOKIE_NAME,
+      password: process.env.IRON_SESSION_SECRET!,
+    }),
+);
 
 export async function logout() {
   const session = await getSession();
