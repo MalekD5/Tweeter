@@ -5,7 +5,7 @@ import { useUploadThing } from "@/lib/uploadthing";
 import { useDropzone } from "@uploadthing/react";
 import { Textarea } from "@/components/ui/textarea";
 import { generateClientDropzoneAccept } from "uploadthing/client";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { FaImage, FaPoll, FaRegSmile } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
