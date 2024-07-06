@@ -14,18 +14,10 @@ export const StepContext = createContext<_StepContext>({
   dispatch: () => {},
 });
 
-export default function MultiStepFormContextContainer({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function MultiStepFormContextContainer({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, MULTI_FORM_DEFAULT_STATE);
 
-  return (
-    <StepContext.Provider value={{ state, dispatch }}>
-      {children}
-    </StepContext.Provider>
-  );
+  return <StepContext.Provider value={{ state, dispatch }}>{children}</StepContext.Provider>;
 }
 
 function reducer(state: _StepState, action: _StepAction): _StepState {
