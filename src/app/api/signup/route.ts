@@ -1,7 +1,7 @@
 import { getSession } from "@/actions/auth";
-import { db } from "@/lib/db";
-import { usersTable } from "@/lib/db/schemas";
-import { SignUpSchema } from "@/lib/zod";
+import { db } from "@/db";
+import { usersTable } from "@/db/schemas";
+import { signUpSchema } from "@/lib/zod";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
 
-  const parse = await SignUpSchema.safeParseAsync(body);
+  const parse = await signUpSchema.safeParseAsync(body);
 
   if (parse.error) {
     return NextResponse.json({ error: parse.error.message }, { status: 400 });

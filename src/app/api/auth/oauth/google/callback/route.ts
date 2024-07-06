@@ -1,8 +1,8 @@
 import { google } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { OAuth2RequestError } from "arctic";
-import { db } from "@/lib/db";
-import { usersTable } from "@/lib/db/schemas";
+import { db } from "@/db";
+import { usersTable } from "@/db/schemas";
 import { eq } from "drizzle-orm";
 import { getSession } from "@/actions/auth";
 import crypto from "crypto";
