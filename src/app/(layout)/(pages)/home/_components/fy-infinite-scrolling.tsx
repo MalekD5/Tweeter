@@ -1,15 +1,11 @@
 "use client";
 
 import TweetCard from "@/components/tweet/tweet-card";
-import useInfiniteScrolling from "@/hooks/use-infinite-scrolling";
 import { useState } from "react";
 
 export default function FyInfiniteScrolling() {
   const [size, setSize] = useState<number>(12);
 
-  const ref = useInfiniteScrolling(() => {
-    setSize(size + 10);
-  });
   return (
     <>
       {[...Array(size)].map((_, i) => (
@@ -30,7 +26,6 @@ export default function FyInfiniteScrolling() {
           }}
         />
       ))}
-      <div ref={ref}></div>
     </>
   );
 }
