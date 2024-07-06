@@ -1,6 +1,6 @@
 "use client";
 
-import { SignUpSchema } from "@/lib/zod";
+import { signUpSchema } from "@/lib/zod";
 import { useContext } from "react";
 import { StepContext } from "../_context";
 import { useForm as useRHForm } from "react-hook-form";
@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-const StepSchema = SignUpSchema.pick({
+const StepSchema = signUpSchema.pick({
   username: true,
 });
 

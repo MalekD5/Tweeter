@@ -1,6 +1,6 @@
 "use client";
 
-import { SignUpSchema } from "@/lib/zod";
+import { signUpSchema } from "@/lib/zod";
 import { useContext, useState } from "react";
 import { z } from "zod";
 import { StepContext } from "../_context";
@@ -23,7 +23,7 @@ import { format } from "date-fns";
 import { cn, isInvalidDate } from "@/lib/utils";
 import { BsCalendar } from "react-icons/bs";
 
-const StepSchema = SignUpSchema.pick({
+const StepSchema = signUpSchema.pick({
   displayName: true,
   birthDay: true,
 });
