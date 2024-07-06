@@ -4,7 +4,7 @@ import { OAuth2RequestError } from "arctic";
 import { db } from "@/db";
 import { usersTable } from "@/db/schemas";
 import { eq } from "drizzle-orm";
-import { getSession } from "@/actions/auth";
+import { getSession } from "@/lib/session";
 import crypto from "crypto";
 
 export async function GET(request: Request): Promise<Response> {

@@ -1,4 +1,4 @@
-import { getSession } from "@/actions/auth";
+import { getSession } from "@/lib/session";
 import Landing from "@/components/landing";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";

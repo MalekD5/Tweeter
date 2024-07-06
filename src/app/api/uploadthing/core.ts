@@ -1,4 +1,4 @@
-import { getSession } from "@/actions/auth";
+import { getSession } from "@/lib/session";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 

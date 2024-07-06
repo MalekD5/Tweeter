@@ -1,21 +1,10 @@
 "use server";
 
-import { IRON_SESSION_COOKIE_NAME, SessionData } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { db } from "@/db";
 import { usersTable } from "@/db/schemas";
 import { signUpSchema } from "@/lib/zod";
 import { eq } from "drizzle-orm";
-import { getIronSession } from "iron-session";
-import { cookies } from "next/headers";
-import { cache } from "react";
-
-export const getSession = cache(
-  async () =>
-    await getIronSession<SessionData>(cookies(), {
-      cookieName: IRON_SESSION_COOKIE_NAME,
-      password: process.env.IRON_SESSION_SECRET!,
-    }),
-);
 
 export async function logout() {
   const session = await getSession();

@@ -2,7 +2,7 @@ import Landing from "@/components/landing";
 import { redirect } from "next/navigation";
 import { MultiStepForm } from "./_components/multi-step-form";
 import MultiStepFormContextContainer from "./_context";
-import { getSession } from "@/actions/auth";
+import { getSession } from "@/lib/session";
 import { BsTwitterX } from "react-icons/bs";
 
 export default async function CompleteSignup() {
