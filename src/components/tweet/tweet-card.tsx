@@ -1,4 +1,4 @@
-import type { DBTweet, DBUser } from "@/lib/db/schemas";
+import type { DBTweet, DBUser } from "@/db/schemas";
 import { DotFilledIcon } from "@radix-ui/react-icons";
 import { formatDistanceToNow, formatDistanceToNowStrict } from "date-fns";
 import Image from "next/image";
