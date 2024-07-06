@@ -1,8 +1,8 @@
 "use server";
 
 import { IRON_SESSION_COOKIE_NAME, SessionData } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { usersTable } from "@/lib/db/schemas";
+import { db } from "@/db";
+import { usersTable } from "@/db/schemas";
 import { signUpSchema } from "@/lib/zod";
 import { eq } from "drizzle-orm";
 import { getIronSession } from "iron-session";
