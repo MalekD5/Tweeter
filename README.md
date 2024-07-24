@@ -1,36 +1,16 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Tweeter
 
-## Getting Started
+Tweeter is a twitter clone built with Next.js. This project attempts to apply clean architecture principles and explores features of Next.js 14 framework such as React Server Components, and Server actions. This project also make use of [Drizzle ORM](https://drizzle-orm.com/) for database operations, [Uploadthing](https://github.com/uploadthing/uploadthing) for uploading images and videos, and [Emoji Mart](https://github.com/missive/emoji-mart) for emoji picker.
 
-First, run the development server:
+## Structure
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+As mention in the description, this project uses clean architecture principles. Here is how this project structured:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- `app`: This is mainly the presentation layer of the application.
+- `use-cases`: This is where all the use cases are defined. like creating an account, posting a tweet, etc..
+- `use-cases/common`: this contains interfaces with implementation being delegated to the **infrastructure** folder. mostly typing database operations like getTweets, createTweet, etc..
+- `infrastructure`: This is where all the infrastructure code is defined, mostly database stuff and server actions.
+- `entities`: This is where all the entities are defined, like tweet, user, etc..
+- `lib`: Third party libraries and utility functions.
+- `db`: This is where the database connection is defined.
+- `types`: This is where all the global types are defined.
