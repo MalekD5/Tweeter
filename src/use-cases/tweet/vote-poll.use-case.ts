@@ -2,4 +2,4 @@ type Context = {};
 
 type Data = {};
 
-export default function votePollUseCases(context: Context, data: Data) {}
+export default function votePollUseCase(context: Context, data: Data) {}

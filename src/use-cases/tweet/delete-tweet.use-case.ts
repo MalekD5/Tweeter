@@ -2,4 +2,4 @@ type Context = {};
 
 type Data = {};
 
-export default function deleteTweetUseCases(context: Context, data: Data) {}
+export default function deleteTweetUseCase(context: Context, data: Data) {}
