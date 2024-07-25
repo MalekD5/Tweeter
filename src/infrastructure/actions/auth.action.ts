@@ -4,7 +4,7 @@ import { signUpSchema } from "@/lib/zod";
 import { AuthedProcedure } from "./common.action";
 import { signOutUseCase } from "@/use-cases/auth/logout.use-case";
 import { completeSignUpUseCase } from "@/use-cases/auth/complete-sign-up.use-case";
-import { updateUser } from "@/infrastructure/database/user-repository";
+import { updateUser } from "@/infrastructure/database/user.repository";
 
 export const signOutAction = AuthedProcedure.createServerAction().handler(async ({ ctx }) => {
   const session = ctx.session;
