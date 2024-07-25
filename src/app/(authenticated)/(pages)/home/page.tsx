@@ -2,22 +2,10 @@ import { Tabs } from "@/components/ui/tabs";
 import { List as RadixTab } from "@radix-ui/react-tabs";
 import TriggerItem from "./_components/trigger-item";
 import TriggerContainer from "./_components/trigger-container";
-import { redirect } from "next/navigation";
 import FyTab from "./_components/for-you-tab";
 import FollowingTab from "./_components/following-tab";
-import { getSession } from "@/actions/auth";
 
 export default async function Home() {
-  const user = await getSession();
-
-  if (!user.id) {
-    return redirect("/");
-  }
-
-  if (!user.username) {
-    return redirect("/complete-signup");
-  }
-
   return (
     <div className="grid-row-1 grid grid-cols-1 lg:grid-cols-[1.3fr_1fr]">
       <div className="col-start-1 col-end-2 min-h-screen border-r border-r-zinc-800">

@@ -1,10 +1,8 @@
-import { getSession } from "@/actions/auth";
-import { Textarea } from "../ui/textarea";
+import { getSession } from "@/lib/session";
 import PostTweetForm from "./client/post-tweet-form";
 
 export default async function PostTweet() {
-  const session = await getSession();
-  if (!session.id) return <div>Loading...</div>;
+  const { session } = await getSession();
 
   return (
     <div className="min-h-0 w-full border-b border-b-zinc-800">

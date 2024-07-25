@@ -28,7 +28,7 @@ export async function GET(request: Request): Promise<Response> {
       },
     });
     const googleUser: GoogleUser = await googleUserResponse.json();
-    // Replace this with your own DB client.
+
     const [existingUser] = await db
       .select()
       .from(usersTable)
@@ -37,12 +37,12 @@ export async function GET(request: Request): Promise<Response> {
     if (existingUser) {
       const session = await getSession();
 
-      session.username = existingUser.username || "";
-      session.displayName = existingUser.name!;
-      session.image = existingUser.image!;
-      session.id = existingUser.id;
-
-      await session.save();
+      await session.updateSession({
+        username: existingUser.username || "",
+        name: existingUser.name!,
+        image: existingUser.image!,
+        id: existingUser.id,
+      });
 
       return new Response(null, {
         status: 302,
@@ -66,12 +66,13 @@ export async function GET(request: Request): Promise<Response> {
 
     const session = await getSession();
 
-    session.username = "";
-    session.displayName = googleUser.name!;
-    session.image = googleUser.picture!;
-    session.id = userId;
+    await session.updateSession({
+      username: "",
+      name: googleUser.name!,
+      image: googleUser.picture!,
+      id: userId,
+    });
 
-    await session.save();
     return new Response(null, {
       status: 302,
       headers: {

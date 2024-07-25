@@ -2,9 +2,9 @@
 
 import { useContext } from "react";
 import { StepContext } from "../_context";
-import { StepOne } from "./step-one";
-import { StepTwo } from "./step-two";
-import { StepThree } from "./step-three";
+import { StepOne } from "./step-1";
+import { StepTwo } from "./step-2";
+import { StepThree } from "./step-3";
 
 export function MultiStepForm() {
   const { state } = useContext(StepContext);

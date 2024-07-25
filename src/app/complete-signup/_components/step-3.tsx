@@ -4,8 +4,7 @@ import { StepContext } from "../_context";
 import { useContext } from "react";
 import { useForm as useRHForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { completeSignUp } from "@/actions/auth";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
 import {
   Form,
   FormControl,
@@ -21,6 +20,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/spinner";
+
+import { useServerAction } from "zsa-react";
+import { completeSignUpAction } from "@/infrastructure/actions/auth.action";
+import { z } from "zod";
 
 const StepSchema = signUpSchema.pick({
   bio: true,
@@ -39,24 +42,30 @@ export function StepThree() {
     resolver: zodResolver(StepSchema),
   });
 
-  const [formState, formAction] = useFormState<_StepServerAction, FormData>(completeSignUp, {
-    success: true,
-    redirect: false,
-  });
+  const { execute, data } = useServerAction(completeSignUpAction);
 
-  if (formState.success && formState.redirect) {
+  if (data?.success && data?.redirect) {
     setTimeout(() => router.push("/home"), 2000);
   }
+
+  const onSubmit = async (values: z.infer<typeof StepSchema>) => {
+    await execute({
+      username: state.username,
+      displayName: state.displayName,
+      birthDay: state.birthDay,
+      ...values,
+    });
+  };
 
   const onPrevious = () => dispatch({ type: "prev" });
   return (
     <Form {...form}>
-      <form action={formAction} className="w-2/3 space-y-6">
-        {!formState.success && (
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+        {data && !data.success && (
           <Alert variant="destructive">
             <IoAlertCircle className="size-5" />
             <AlertTitle>Error</AlertTitle>
-            <AlertDescription>response: {formState.error}</AlertDescription>
+            <AlertDescription>response: {data.error}</AlertDescription>
           </Alert>
         )}
         <h3 className="text-center">Step 3 of 3 (Optional)</h3>
@@ -101,12 +110,12 @@ export function StepThree() {
 
         <div className="flex w-full justify-between gap-2">
           <PreviousButton
-            redirect={formState.success && formState.redirect}
+            redirect={!!data && data.success && data.redirect}
             onPrevious={onPrevious}
           />
           <TrackButton
             isValid={form.formState.isValid}
-            redirect={formState.success && formState.redirect}
+            redirect={!!data && data.success && data.redirect}
           />
         </div>
       </form>
