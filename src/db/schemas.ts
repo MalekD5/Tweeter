@@ -27,7 +27,7 @@ export const tweetsTable = pgTable("tweet", {
   hasEntities: boolean("has_entities").notNull().default(false),
 });
 
-export const entityType = pgEnum("entity_type", ["image", "video", "user"]);
+export const entityType = pgEnum("entity_type", ["image", "video", "user", "poll"]);
 
 export const entityTable = pgTable("tweet_entity", {
   id: text("id")
@@ -40,9 +40,23 @@ export const entityTable = pgTable("tweet_entity", {
   entityUrl: text("entity_url").notNull(),
 });
 
+export const pollTable = pgTable("poll", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  tweetId: text("tweet_id")
+    .notNull()
+    .references(() => tweetsTable.id),
+  question: text("question").notNull(),
+  options: text("options").array().notNull(),
+  endsAt: timestamp("ends_at").notNull(),
+});
+
 export type DBUser = typeof usersTable.$inferSelect;
 export type DBUserInsert = typeof usersTable.$inferInsert;
 export type DBTweet = typeof tweetsTable.$inferSelect;
 export type DBTweetInsert = typeof tweetsTable.$inferInsert;
 export type DBEntity = typeof entityTable.$inferSelect;
 export type DBEntityInsert = typeof entityTable.$inferInsert;
+export type DBTweetPoll = typeof pollTable.$inferSelect;
+export type DBTweetPollInsert = typeof pollTable.$inferInsert;
