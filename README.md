@@ -1,16 +1,36 @@
 # Tweeter
 
-Tweeter is a twitter clone built with Next.js. This project attempts to apply clean architecture principles and explores features of Next.js 14 framework such as React Server Components, and Server actions. This project also make use of [Drizzle ORM](https://drizzle-orm.com/) for database operations, [Uploadthing](https://github.com/uploadthing/uploadthing) for uploading images and videos, and [Emoji Mart](https://github.com/missive/emoji-mart) for emoji picker.
+Tweeter is a Twitter/X clone built with Next.js 14.
 
-## Structure
+## 📁 Folder Structure
 
-As mention in the description, this project uses clean architecture principles. Here is how this project structured:
+- `app/`:  
+  Application routes using the Next.js App Router, including layouts, pages, route groups, and API endpoints (under `app/api/`).
 
-- `app`: This is mainly the presentation layer of the application.
-- `use-cases`: This is where all the use cases are defined. like creating an account, posting a tweet, etc..
-- `use-cases/common`: this contains interfaces with implementation being delegated to the **infrastructure** folder. mostly typing database operations like getTweets, createTweet, etc..
-- `infrastructure`: This is where all the infrastructure code is defined, mostly database stuff and server actions.
-- `entities`: This is where all the entities are defined, like tweet, user, etc..
-- `lib`: Third party libraries and utility functions.
-- `db`: This is where the database connection is defined.
-- `types`: This is where all the global types are defined.
+- `components/`:  
+  Reusable React components, organized by feature (e.g., `tweet/`, `layout/`) and base UI primitives under `ui/`.
+
+- `lib/`:  
+  Utility functions, configuration files, and foundational code such as `db.ts` (Prisma client), `auth/`, and shared constants.
+
+- `models/`:  
+  Optional domain model definitions or abstractions with Drizzle ORM
+
+- `services/`:  
+  Business logic and data access layer. Each file encapsulates logic related to a domain (e.g., `tweet.service.ts`, `auth.service.ts`).
+
+- `hooks/`:  
+  Custom React hooks for abstracting logic like authentication state or tweet interactions (`useAuth`, `useTweetActions`).
+
+- `context/`:  
+  React Context providers for app-wide state like authentication or UI preferences.
+
+- `types/`:  
+  Global TypeScript types and interfaces used across the app for consistency in API, components, and services.
+
+- `public/`:  
+  Static files such as images, icons, and web fonts (e.g., `fonts/chirp-*.woff`). Accessible via the root URL.
+
+- `tests/`:  
+  Contains unit and integration tests, typically organized to mirror the `services/` or `components/` structure.
+
