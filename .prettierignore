@@ -1,6 +1,0 @@
-.prettierrc.js
-.eslintrc.js
-*.config.ts
-*.config.mjs
-
-node_modules
