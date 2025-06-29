@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Poppins } from "next/font/google";
 
 export const metadata: Metadata = {
 	title: "Tweeter",
@@ -11,11 +10,6 @@ export const metadata: Metadata = {
 	},
 };
 
-const font = Poppins({
-	weight: "400",
-	subsets: ["latin"],
-});
-
 export default function RootLayout({
 	children,
 }: Readonly<{
@@ -23,7 +17,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={`${font.className} dark`}>{children}</body>
+			<body>{children}</body>
 		</html>
 	);
 }
