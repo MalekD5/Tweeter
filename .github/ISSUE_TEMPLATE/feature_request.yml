@@ -1,0 +1,35 @@
+name: Feature Request
+description: Suggest a new feature or improvement
+title: "[Feature] <short summary>"
+labels: ["type: feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a cool idea or improvement in mind? Share it below and we'll take a look!
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature Description
+      description: Describe the feature you'd like to see added.
+      placeholder: I think it would be great if...
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation / Use Case
+      description: Why is this feature important? How would it help users or developers?
+      placeholder: This would solve the problem of...
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Considered Alternatives
+      description: Did you consider any alternative solutions or features?
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context, diagrams, or mockups related to your request.
