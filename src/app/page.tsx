@@ -39,16 +39,19 @@ export default async function Home() {
 									width={20}
 									height={20}
 								/>
-								<p className="text-foreground-muted">Sign In With Google</p>
+								<p className="text-muted">Sign In With Google</p>
 							</Button>
 						</div>
 						<Separator>OR</Separator>
 						<Button type="button" variant="primary">
 							Create account
 						</Button>
-						<p className="text-xs">
-							By signing up, you agree to the Terms of Service and Privacy
-							Policy, including Cookie Use.
+						<p className="text-xs text-foreground-muted">
+							{"By signing up, you agree to the "}
+							<span className="text-twitter-blue">Terms of Service</span>
+							{" and "}
+							<span className="text-twitter-blue">Privacy Policy</span>,
+							including <span className="text-twitter-blue">Cookie Use</span>.
 						</p>
 					</div>
 				</div>
