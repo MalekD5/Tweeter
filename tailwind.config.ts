@@ -14,8 +14,9 @@ const config = {
 			colors: {
 				foreground: {
 					DEFAULT: "#E7E9EA",
-					muted: colors.zinc[700],
+					muted: colors.zinc[500],
 				},
+				muted: colors.zinc[700],
 				"twitter-blue": "#1D9BF0",
 			},
 			fontFamily: {
