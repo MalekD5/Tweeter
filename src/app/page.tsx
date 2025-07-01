@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Separator } from "@/components/ui";
+import { Button, Separator } from "@/components/ui";
 
 export default async function Home() {
 	return (
@@ -19,18 +19,19 @@ export default async function Home() {
 					width={30}
 					height={30}
 				/>
-				<h1 className="text-4xl md:text-6xl font-extrabold font-[ChirpExtended] text-[#e7e9ea]">
+				<h1 className="text-4xl md:text-6xl font-extrabold font-chirp-extended text-foreground">
 					Happening now
 				</h1>
 				<div className="flex flex-col gap-6">
-					<p className="font-extrabold font-[ChirpExtended] text-[#e7e9ea] text-3xl">
+					<p className="font-extrabold font-chirp-extended text-foreground text-3xl">
 						Join today.
 					</p>
 					<div className="flex flex-col gap-2 md:w-6/12">
 						<div className="w-full pb-10">
-							<button
+							<Button
+								variant="white"
 								type="button"
-								className="rounded-full bg-white px-6 py-2 text-zinc-700 font-medium flex gap-1 justify-center items-center w-full"
+								className="flex items-center justify-center gap-1 w-full"
 							>
 								<Image
 									src="/svg/google.svg"
@@ -38,16 +39,13 @@ export default async function Home() {
 									width={20}
 									height={20}
 								/>
-								<p>Sign In With Google</p>
-							</button>
+								<p className="text-foreground-muted">Sign In With Google</p>
+							</Button>
 						</div>
 						<Separator>OR</Separator>
-						<button
-							type="button"
-							className="rounded-full bg-blue-500 px-6 py-2 text-white font-medium text-center"
-						>
+						<Button type="button" variant="primary">
 							Create account
-						</button>
+						</Button>
 						<p className="text-xs">
 							By signing up, you agree to the Terms of Service and Privacy
 							Policy, including Cookie Use.
@@ -55,13 +53,10 @@ export default async function Home() {
 					</div>
 				</div>
 				<div className="flex flex-col gap-4 md:w-6/12">
-					<p className="font-bold text-[#e7e9ea]">Already have an account?</p>
-					<button
-						type="button"
-						className="rounded-full px-6 py-2 text-blue-500 font-medium text-center border border-slate-800 font-sm hover:cursor-pointer hover:bg-blue-500/10"
-					>
+					<p className="font-bold text-foreground">Already have an account?</p>
+					<Button variant="ghost" className="w-full" type="button">
 						Sign In
-					</button>
+					</Button>
 				</div>
 			</div>
 		</div>
