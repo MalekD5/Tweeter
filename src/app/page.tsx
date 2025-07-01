@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Separator } from "@/components/ui";
 
 export default async function Home() {
 	return (
@@ -40,12 +41,7 @@ export default async function Home() {
 								<p>Sign In With Google</p>
 							</button>
 						</div>
-						<div
-							className="before:contents-[''] before:flex-1 before:p-[0.5px] before:bg-zinc-800 before:m-2 flex items-center before:rounded-full
-            after:contents-[''] after:flex-1 after:p-[0.5px] after:bg-zinc-800 after:m-2 after:rounded-full"
-						>
-							OR
-						</div>
+						<Separator>OR</Separator>
 						<button
 							type="button"
 							className="rounded-full bg-blue-500 px-6 py-2 text-white font-medium text-center"
@@ -62,7 +58,7 @@ export default async function Home() {
 					<p className="font-bold text-[#e7e9ea]">Already have an account?</p>
 					<button
 						type="button"
-						className="rounded-full px-6 py-2 text-blue-500 font-medium text-center border border-slate-800 font-sm"
+						className="rounded-full px-6 py-2 text-blue-500 font-medium text-center border border-slate-800 font-sm hover:cursor-pointer hover:bg-blue-500/10"
 					>
 						Sign In
 					</button>
