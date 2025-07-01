@@ -1,3 +1,3 @@
 export default function Bookmarks() {
-  return <div>bookmarks</div>;
+	return <div>bookmarks</div>;
 }

@@ -34,6 +34,15 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "ChirpExtended";
+  src: url("/fonts/chirp-extended-heavy-web.woff") format("woff");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
   font-family: "Chirp", sans-serif;
+  @apply bg-black text-white
 }

@@ -1,3 +1,3 @@
 export default function Messages() {
-  return <div>messages</div>;
+	return <div>messages</div>;
 }
