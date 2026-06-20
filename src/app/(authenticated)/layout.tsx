@@ -1,27 +1,25 @@
-import Image from "next/image";
-import { GoBookmark, GoBookmarkFill, GoHome, GoHomeFill } from "react-icons/go";
-import { TbNotes, TbUser, TbUserFilled } from "react-icons/tb";
-import { IoMailOutline, IoMailSharp, IoSettingsOutline, IoSettingsSharp } from "react-icons/io5";
-import { Button } from "@/components/ui/button";
-import { User, NavContainer, NavItem } from "./_components/";
-import { Page } from "./_context/types";
-import { LiaFeatherAltSolid } from "react-icons/lia";
-import { getSession } from "@/lib/session";
-import { redirect } from "next/navigation";
+// import Image from "next/image";
+// import { GoBookmark, GoBookmarkFill, GoHome, GoHomeFill } from "react-icons/go";
+// import { TbNotes, TbUser, TbUserFilled } from "react-icons/tb";
+// import { IoMailOutline, IoMailSharp, IoSettingsOutline, IoSettingsSharp } from "react-icons/io5";
+// import { Button } from "@/components/ui/button";
+// import { User, NavContainer, NavItem } from "./_components/";
+// import { Page } from "./_context/types";
+// import { LiaFeatherAltSolid } from "react-icons/lia";
 
-export default async function Layout({ children }: { children: React.ReactNode }) {
-  const session = await getSession();
+export default function Layout({ children }: { children: React.ReactNode }) {
+  // const session = await getSession();
 
-  if (!session.isValid()) {
-    return session.shouldCompleteSignUp() ? redirect("/complete-signup") : redirect("/");
-  }
+  // if (!session.isValid()) {
+  //   return session.shouldCompleteSignUp() ? redirect("/complete-signup") : redirect("/");
+  // }
 
   return (
     <div className="grid min-h-screen grid-cols-[100px_1fr] grid-rows-1 lg:grid-cols-[0.8fr_1fr_1fr]">
       <header className="sticky top-0 col-start-1 col-end-2 flex max-h-screen w-full justify-end border-r border-zinc-700">
         <div className="w-4/6 pr-2">
           <div className="relative">
-            <NavContainer>
+            {/* <NavContainer>
               <NavItem
                 type={Page.HOME}
                 icon={<Image src="/logo.svg" aria-hidden alt="logo" width={32} height={32} />}
@@ -44,7 +42,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
             </NavContainer>
             <div className="absolute bottom-2 w-full">
               <User session={session} />
-            </div>
+            </div> */}
           </div>
         </div>
       </header>

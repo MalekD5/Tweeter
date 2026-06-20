@@ -1,0 +1,15 @@
+# Supply-chain hardening (pnpm 10.33+).
+# Settings live here (not .npmrc) because several are lists/maps; pnpm reads this file as config.
+minimumReleaseAge: 10080 # 1 week, in minutes — hold back freshly published versions
+minimumReleaseAgeExclude: [] # add packages here if a required version is younger than the window
+blockExoticSubdeps: true # transitive deps may only resolve from trusted (registry/tarball) sources
+dangerouslyAllowAllBuilds: false # never auto-run every dependency's install scripts
+onlyBuiltDependencies: [] # allowlist of deps permitted to run install/build scripts — empty = none
+ignoredBuiltDependencies: # reviewed & intentionally NOT built (ship prebuilt binaries or have a JS fallback)
+  - esbuild
+  - lefthook
+  - msgpackr-extract
+  - sharp
+trustPolicy: no-downgrade # fail if a package's trust level drops compared to prior releases
+trustPolicyExclude: # reviewed-benign packages whose newer releases dropped publisher attestation
+  - tailwind-merge

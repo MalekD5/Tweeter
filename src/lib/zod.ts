@@ -5,7 +5,7 @@ export const signUpSchema = z.object({
     .string()
     .min(3)
     .max(20)
-    .regex(/^[a-zA-Z0-9_]+$/g),
+    .regex(/^[a-zA-Z0-9_]+$/gu),
   displayName: z.string().min(3).max(20),
   birthDay: z.date(),
   location: z.string().max(60).optional(),

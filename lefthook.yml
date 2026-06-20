@@ -1,6 +1,21 @@
+# pre-commit auto-fixes & re-stages so formatting lands in the commit.
+# pre-push verifies the tree is clean and blocks pushes that aren't.
 pre-commit:
+  piped: true
   commands:
-    check:
-      glob: "src/*.{ts,tsx}"
-      run: npx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
+    1_lint:
+      glob: "*.{js,jsx,ts,tsx}"
+      run: pnpm oxlint --fix {staged_files}
       stage_fixed: true
+    2_format:
+      glob: "*.{js,jsx,ts,tsx,json,jsonc,css,md}"
+      run: pnpm oxfmt {staged_files}
+      stage_fixed: true
+
+pre-push:
+  parallel: true
+  commands:
+    lint:
+      run: pnpm oxlint
+    format:
+      run: pnpm oxfmt --check

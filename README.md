@@ -1,6 +1,6 @@
 # Tweeter
 
-Tweeter is a Twitter/X clone built with Next.js 14.
+Tweeter is a Twitter/X clone built with Next.js 16.
 
 ## 📁 Folder Structure
 
@@ -11,7 +11,7 @@ Tweeter is a Twitter/X clone built with Next.js 14.
   Reusable React components, organized by feature (e.g., `tweet/`, `layout/`) and base UI primitives under `ui/`.
 
 - `lib/`:  
-  Utility functions, configuration files, and foundational code such as `db.ts` (Prisma client), `auth/`, and shared constants.
+  Utility functions, configuration files, and foundational code such as `db.ts` (Drizzle client), `auth/`, and shared constants.
 
 - `models/`:  
   Optional domain model definitions or abstractions with Drizzle ORM
@@ -33,4 +33,3 @@ Tweeter is a Twitter/X clone built with Next.js 14.
 
 - `tests/`:  
   Contains unit and integration tests, typically organized to mirror the `services/` or `components/` structure.
-

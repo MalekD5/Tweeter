@@ -1,12 +1,17 @@
-import { Config, defineConfig } from 'drizzle-kit'
+import { defineConfig } from "drizzle-kit";
 
-// @ts-ignore
+const databaseUrl = process.env.DATABASE_URL as string;
+
+if (!databaseUrl) {
+  throw new Error("you must have DATABASE_URL defined in your env file");
+}
+
 export default defineConfig({
- schema: "./src/lib/db/schemas.ts",
-  dialect: 'postgresql',
+  schema: "./src/db/schemas.ts",
+  dialect: "postgresql",
   dbCredentials: {
-    url: process.env.DATABASE_URL,
+    url: databaseUrl,
   },
   verbose: true,
   strict: true,
-})
+});
